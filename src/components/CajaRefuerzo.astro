@@ -1,0 +1,75 @@
+---
+interface Props {
+	tipo: 'sabias' | 'recuerda' | 'mas'
+	id: string
+	/** De que va la caja. No se ve, pero distingue este landmark de los demas. */
+	tema: string
+}
+
+const { tipo, id, tema } = Astro.props
+
+// El tipo de caja se anuncia SIEMPRE con texto en el encabezado: ni el color
+// ni la forma son el unico indicador.
+const estilos = {
+	sabias: { etiqueta: '¿Sabías qué…?', borde: 'border-lima', forma: 'rombo' },
+	recuerda: { etiqueta: 'Recuerda', borde: 'border-uva', forma: 'circulo' },
+	mas: { etiqueta: 'Para saber más', borde: 'border-chicle', forma: 'cuadrado' },
+} as const
+
+const { etiqueta, borde, forma } = estilos[tipo]
+const tituloId = `${id}-titulo`
+---
+
+<aside aria-labelledby={tituloId} class={`my-8 max-w-[74ch] rounded-r-xl border-y-2 border-r-2 border-l-[6px] border-y-tinta/15 border-r-tinta/15 bg-white/70 py-5 pl-5 pr-5 ${borde}`}>
+	<h3 id={tituloId} class="flex items-center gap-2.5 text-[1.02rem] font-extrabold">
+		<span aria-hidden="true" class="shrink-0">
+			{forma === 'rombo' && <span class="block h-3 w-3 rotate-45 border-2 border-tinta bg-lima"></span>}
+			{forma === 'circulo' && <span class="block h-3.5 w-3.5 rounded-full border-2 border-tinta bg-uva"></span>}
+			{forma === 'cuadrado' && <span class="block h-3.5 w-3.5 rounded-[3px] border-2 border-tinta bg-chicle"></span>}
+		</span>
+		{etiqueta}<span class="solo-lectores">: {tema}</span>
+	</h3>
+	<div class="caja-cuerpo mt-2.5 max-w-[62ch] text-[0.97rem] leading-relaxed text-tinta/85">
+		<slot />
+	</div>
+</aside>
+
+<style>
+	.caja-cuerpo :global(p + p) {
+		margin-top: 0.7rem;
+	}
+
+	.caja-cuerpo :global(ul) {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 0.3rem;
+	}
+
+	.caja-cuerpo :global(li) {
+		padding-left: 1.1rem;
+		position: relative;
+	}
+
+	.caja-cuerpo :global(li)::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.62em;
+		width: 0.42rem;
+		height: 0.42rem;
+		border-radius: 50%;
+		background: var(--color-uva);
+	}
+
+	.caja-cuerpo :global(a) {
+		color: var(--color-tinta);
+		text-decoration-line: underline;
+		text-decoration-color: var(--color-chicle);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 3px;
+	}
+
+	.caja-cuerpo :global(a:hover) {
+		background: var(--color-lima);
+	}
+</style>

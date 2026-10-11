@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Portada del vídeo: moverte por las carpetas con cd">
+	<rect width="1280" height="720" fill="#ede6ff"/>
+	<rect x="150" y="150" width="980" height="420" rx="18" fill="#5b2ee5" stroke="#1e1046" stroke-width="6"/>
+	<rect x="150" y="150" width="980" height="62" rx="18" fill="#5b2ee5"/>
+	<path d="M150 212 h980" stroke="#1e1046" stroke-width="6"/>
+	<circle cx="196" cy="181" r="11" fill="#ff3d8b" stroke="#1e1046" stroke-width="3"/>
+	<circle cx="232" cy="181" r="11" fill="#a8e80b" stroke="#1e1046" stroke-width="3"/>
+	<circle cx="268" cy="181" r="11" fill="#ffffff" stroke="#1e1046" stroke-width="3"/>
+	<rect x="150" y="212" width="980" height="358" fill="#ffffff"/>
+	<text x="200" y="300" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="600" fill="#5b2ee5">alex@ubuntu:~$ <tspan fill="#1e1046">cd Fotos</tspan></text>
+	<text x="200" y="360" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="600" fill="#5b2ee5">alex@ubuntu:~/Fotos$ <tspan fill="#1e1046">█</tspan></text>
+	<rect x="200" y="424" width="412" height="16" fill="#a8e80b"/>
+	<text x="200" y="432" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="40" font-weight="800" fill="#1e1046">Moverte sin perderte</text>
+	<text x="200" y="500" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="500" fill="#1e1046">pwd, ls y cd en dos minutos y medio</text>
+</svg>

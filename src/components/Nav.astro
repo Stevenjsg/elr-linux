@@ -1,0 +1,32 @@
+---
+const enlaces = [
+	{ texto: 'Temario', href: '/#ruta' },
+	{ texto: 'Precio', href: '/#precio' },
+]
+---
+
+<header class="mx-auto flex max-w-[1180px] items-center justify-between px-4 py-6 sm:px-8">
+	<a href="/" class="group flex items-baseline gap-2 no-underline">
+		<span class="font-mono text-2xl font-semibold tracking-tight text-uva">elr</span>
+		<span class="hidden font-mono text-xs text-tinta/70 sm:inline">linux desde cero</span>
+	</a>
+
+	<nav aria-label="Principal" class="flex items-center gap-5 sm:gap-7">
+		{
+			enlaces.map((enlace) => (
+				<a
+					href={enlace.href}
+					class="text-[0.95rem] font-semibold text-tinta no-underline decoration-lima decoration-[3px] underline-offset-4 hover:underline"
+				>
+					{enlace.texto}
+				</a>
+			))
+		}
+		<a
+			href="/#precio"
+			class="rounded-full border-2 border-tinta px-4 py-1.5 text-[0.95rem] font-semibold text-tinta no-underline transition-colors hover:bg-tinta hover:text-lila"
+		>
+			Entrar
+		</a>
+	</nav>
+</header>

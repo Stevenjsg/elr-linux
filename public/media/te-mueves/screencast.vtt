@@ -1,0 +1,85 @@
+WEBVTT
+
+NOTE
+Subtítulos de BORRADOR generados a partir del guion del screencast.
+Los tiempos son estimados: ajústalos tras grabar el vídeo.
+
+1
+00:00:00.000 --> 00:00:05.500
+Esto es una terminal recién abierta. No da miedo: solo está esperando a que le digas algo.
+
+2
+00:00:05.500 --> 00:00:12.000
+Fíjate en esta línea: alex, arroba, ubuntu, dos puntos, virgulilla, dólar.
+
+3
+00:00:12.000 --> 00:00:18.500
+Alex es mi usuario, ubuntu es el nombre del equipo y la virgulilla es la carpeta donde estoy.
+
+4
+00:00:18.500 --> 00:00:24.000
+El dólar significa que está lista. Ese símbolo no se escribe nunca.
+
+5
+00:00:24.000 --> 00:00:30.000
+Primera orden: pwd. Enter.
+
+6
+00:00:30.000 --> 00:00:37.500
+Me contesta barra home barra alex. Esa es mi carpeta personal, la que la virgulilla abreviaba.
+
+7
+00:00:37.500 --> 00:00:43.000
+Ahora ls, para ver qué hay aquí dentro.
+
+8
+00:00:43.000 --> 00:00:50.500
+Documentos, Fotos, proyecto y un archivo de notas. Lo mismo que vería en el explorador de archivos.
+
+9
+00:00:50.500 --> 00:00:57.000
+Voy a entrar en Documentos: cd, espacio, Documentos.
+
+10
+00:00:57.000 --> 00:01:04.000
+No ha dicho nada. En Linux el silencio es buena señal: significa que ha funcionado.
+
+11
+00:01:04.000 --> 00:01:11.500
+Lo compruebo en el prompt: ahora pone virgulilla barra Documentos. Y con pwd lo confirmo.
+
+12
+00:01:11.500 --> 00:01:18.000
+Para subir un nivel: cd, espacio, punto, punto.
+
+13
+00:01:18.000 --> 00:01:24.500
+Dos puntos seguidos siempre significan la carpeta de arriba. Ya estoy otra vez en mi carpeta personal.
+
+14
+00:01:24.500 --> 00:01:32.000
+Hasta ahora he usado rutas relativas: cuentan desde donde estoy.
+
+15
+00:01:32.000 --> 00:01:40.500
+También puedo dar la dirección completa: cd, barra, home, barra, alex, barra, Fotos.
+
+16
+00:01:40.500 --> 00:01:48.000
+Eso es una ruta absoluta. Empieza por barra y funciona desde cualquier sitio, esté donde esté.
+
+17
+00:01:48.000 --> 00:01:55.000
+Para volver a casa desde donde sea: cd, espacio, virgulilla. O cd a secas, sin nada más.
+
+18
+00:01:55.000 --> 00:02:03.000
+Y un truco que gusta mucho: cd, espacio, guion. Me devuelve a la carpeta anterior.
+
+19
+00:02:03.000 --> 00:02:10.500
+Es como el botón de atrás del navegador. Si lo repites, vas y vuelves entre dos carpetas.
+
+20
+00:02:10.500 --> 00:02:18.000
+Con pwd, ls y cd ya te mueves por todo el sistema. Pruébalo en el simulador de la lección.

@@ -1,0 +1,784 @@
+---
+import Layout from '../../layouts/Layouts.astro'
+import Nav from '../../components/Nav.astro'
+import CajaRefuerzo from '../../components/CajaRefuerzo.astro'
+import ArbolSVG from '../../components/ArbolSVG.astro'
+import Consola from '../../components/Consola.astro'
+
+const indice = [
+	{ id: 'resultados', texto: 'Resultados de aprendizaje' },
+	{ id: 'donde-estoy', texto: '¿Dónde estoy?' },
+	{ id: 'todo-cuelga', texto: 'Todo cuelga de /' },
+	{ id: 'mirar', texto: 'Mirar antes de moverse' },
+	{ id: 'moverse', texto: 'Moverse' },
+	{ id: 'pruebalo', texto: 'Pruébalo tú' },
+	{ id: 'resumen', texto: 'Resumen' },
+	{ id: 'glosario', texto: 'Glosario' },
+	{ id: 'actividades', texto: 'Actividades' },
+]
+
+const movimientos = [
+	{ orden: 'cd Fotos', efecto: 'Entra en Fotos, que está aquí mismo. Es una ruta relativa: cuenta desde donde estás.' },
+	{ orden: 'cd /home/alex/Fotos', efecto: 'Entra en la misma carpeta diciendo la dirección completa. Es una ruta absoluta y funciona estés donde estés.' },
+	{ orden: 'cd ..', efecto: 'Sube un nivel, a la carpeta que contiene a esta.' },
+	{ orden: 'cd ../proyecto', efecto: 'Sube un nivel y entra en proyecto. Las partes se encadenan con barras.' },
+	{ orden: 'cd .', efecto: 'Se queda donde está. Un punto es «esta carpeta». Sola sirve de poco; en los scripts, de mucho.' },
+	{ orden: 'cd ~', efecto: 'Vuelve a tu carpeta personal desde cualquier sitio. Lo mismo que escribir cd a secas.' },
+	{ orden: 'cd -', efecto: 'Vuelve a la carpeta donde estabas antes. Es el botón de atrás del navegador.' },
+]
+
+const glosario = [
+	{ t: 'Terminal', d: 'La ventana donde escribes órdenes en lugar de hacer clic. También la llamarás consola o línea de comandos.' },
+	{ t: 'Prompt', d: 'El texto que la terminal escribe sola al principio de cada línea para avisarte de que está lista. En Ubuntu tiene la forma usuario@equipo:carpeta$.' },
+	{ t: 'Directorio', d: 'Lo mismo que una carpeta. En Linux se usan las dos palabras indistintamente.' },
+	{ t: 'Raíz', d: 'La carpeta de la que cuelga absolutamente todo el sistema. Se escribe con una sola barra: /. No la confundas con la carpeta del usuario root.' },
+	{ t: 'Carpeta personal (home)', d: 'Tu carpeta dentro de /home, donde viven tus cosas. La de Alex es /home/alex. Se abrevia con la virgulilla ~.' },
+	{ t: 'Ruta absoluta', d: 'La dirección completa de algo, empezando por la raíz. Siempre empieza por /. Por ejemplo /home/alex/Fotos.' },
+	{ t: 'Ruta relativa', d: 'La dirección contada desde la carpeta en la que estás ahora. No empieza por /. Por ejemplo Fotos o ../proyecto.' },
+	{ t: 'Archivo oculto', d: 'Cualquier archivo o carpeta cuyo nombre empieza por un punto, como .bashrc. ls no lo enseña a menos que le pidas ls -a.' },
+]
+
+const enlaces = [
+	{
+		href: 'https://ubuntu.com/tutorials/command-line-for-beginners',
+		texto: 'Tutorial oficial de línea de comandos para principiantes',
+		sitio: 'ubuntu.com, en inglés',
+	},
+	{
+		href: 'https://linuxcommand.org/lc3_lts0020.php',
+		texto: 'Navegación por el sistema de archivos, capítulo de LinuxCommand',
+		sitio: 'linuxcommand.org, en inglés',
+	},
+	{
+		href: 'https://manpages.ubuntu.com/manpages/noble/es/man1/ls.1.html',
+		texto: 'Manual completo de ls traducido al español',
+		sitio: 'manpages.ubuntu.com, en español',
+	},
+	{
+		href: 'https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html',
+		texto: 'Filesystem Hierarchy Standard, la norma que decide qué va en cada carpeta',
+		sitio: 'refspecs.linuxfoundation.org, en inglés',
+	},
+]
+
+const resumen = [
+	'Todo cuelga de la raíz /. No hay letras de unidad: los discos y los pendrives aparecen como carpetas dentro del mismo árbol.',
+	'El prompt ya te dice dónde estás. Si quieres la dirección completa, pregunta con pwd.',
+	'ls enseña lo que hay. Con -a aparecen los ocultos y con -l ves permisos, tamaño y, sobre todo, la d que distingue las carpetas.',
+	'Una ruta absoluta empieza por / y vale desde cualquier sitio. Una relativa cuenta desde donde estás.',
+	'.. es subir un nivel, ~ es tu carpeta personal y cd - te devuelve a la anterior.',
+	'Si cd no dice nada, ha funcionado. En Linux el silencio es buena señal.',
+]
+---
+
+<Layout
+	title="Te mueves: rutas y carpetas con pwd, ls y cd | elr"
+	description="Lección del tramo 02 del curso elr. Aprende el árbol de directorios de Linux y muévete por él con pwd, ls y cd, con gráfico, audio, vídeo y un simulador de terminal."
+>
+	<Nav />
+
+	<main id="contenido">
+		<article class="mx-auto max-w-[1180px] px-4 pb-20 sm:px-8">
+			<header class="max-w-[72ch] pt-4">
+				<a href="/#ruta" class="volver">Volver al temario</a>
+
+				<p class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-1 font-mono text-[0.78rem] font-semibold text-uva">
+					<span>Tramo 02</span>
+					<span class="text-tinta/70">Lección 1 de 4</span>
+					<span class="text-tinta/70">30 min aprox.</span>
+				</p>
+
+				<h1 class="mt-5 text-[clamp(2.4rem,5.4vw,3.8rem)] font-extrabold leading-[0.96] tracking-[-0.035em] text-balance">
+					Te mueves: rutas y carpetas
+				</h1>
+
+				<p class="mt-6 max-w-[52ch] text-[clamp(1.02rem,1.5vw,1.18rem)] leading-relaxed text-tinta/85">
+					Un sistema de archivos es un mapa, y ahora mismo no sabes leerlo. En media hora sabrás
+					siempre dónde estás, qué hay a tu alrededor y cómo llegar a cualquier sitio. Con tres
+					comandos.
+				</p>
+
+				<nav aria-labelledby="indice-titulo" class="mt-10 rounded-xl border-[3px] border-tinta bg-white p-5 sm:p-6">
+					<h2 id="indice-titulo" class="text-[1.05rem] font-extrabold">En esta lección</h2>
+					<ol class="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+						{
+							indice.map((seccion, i) => (
+								<li class="flex gap-3 text-[0.97rem]">
+									<span aria-hidden="true" class="font-mono text-[0.78rem] font-semibold text-uva">
+										{String(i + 1).padStart(2, '0')}
+									</span>
+									<a href={`#${seccion.id}`} class="enlace">
+										{seccion.texto}
+									</a>
+								</li>
+							))
+						}
+					</ol>
+				</nav>
+			</header>
+
+			<section id="resultados" class="seccion">
+				<h2 class="titulo-seccion">Resultados de aprendizaje</h2>
+				<p class="parrafo">Al terminar esta lección podrás:</p>
+				<ul class="mt-4 grid max-w-[64ch] gap-3">
+					<li class="resultado">
+						<strong>Explicar</strong> qué es el árbol de directorios y qué significa la raíz <code>/</code>.
+					</li>
+					<li class="resultado">
+						<strong>Averiguar</strong> en qué carpeta estás con <code>pwd</code> e interpretar lo que te
+						dice el prompt.
+					</li>
+					<li class="resultado">
+						<strong>Listar</strong> el contenido de una carpeta con <code>ls</code>, <code>ls -l</code> y{' '}
+						<code>ls -a</code>.
+					</li>
+					<li class="resultado">
+						<strong>Moverte</strong> con <code>cd</code> usando rutas absolutas y relativas, incluidas{' '}
+						<code>.</code>, <code>..</code>, <code>~</code> y <code>cd -</code>.
+					</li>
+				</ul>
+			</section>
+
+			<section id="donde-estoy" class="seccion">
+				<h2 class="titulo-seccion">¿Dónde estoy?</h2>
+
+				<p class="parrafo">
+					Abres la terminal y lo primero que ves es una línea de texto que no has escrito tú. Se llama{' '}
+					<strong>prompt</strong>, y no es decoración: te está diciendo tres cosas.
+				</p>
+
+				<pre class="bloque"><code>alex@ubuntu:~$</code></pre>
+
+				<dl class="mt-6 grid max-w-[64ch] gap-4">
+					<div class="definicion">
+						<dt><code>alex</code></dt>
+						<dd>Tu nombre de usuario. Quién eres para el sistema.</dd>
+					</div>
+					<div class="definicion">
+						<dt><code>ubuntu</code></dt>
+						<dd>El nombre del equipo. Importa cuando te conectas a varios ordenadores a la vez.</dd>
+					</div>
+					<div class="definicion">
+						<dt><code>~</code></dt>
+						<dd>La carpeta en la que estás ahora mismo. Esa virgulilla significa «mi carpeta personal».</dd>
+					</div>
+					<div class="definicion">
+						<dt><code>$</code></dt>
+						<dd>Está lista y esperando. Puedes escribir.</dd>
+					</div>
+				</dl>
+
+				<p class="parrafo">
+					El prompt te da la carpeta abreviada. Cuando quieras la dirección completa, pregúntasela con{' '}
+					<code>pwd</code>, de <em lang="en">print working directory</em>:
+				</p>
+
+				<pre class="bloque"><code>alex@ubuntu:~$ pwd
+/home/alex</code></pre>
+
+				<p class="parrafo">
+					Ya tienes la primera respuesta: <code>~</code> y <code>/home/alex</code> son la misma carpeta
+					escrita de dos maneras.
+				</p>
+
+				<CajaRefuerzo tipo="recuerda" id="recuerda-dolar" tema="el símbolo del dólar en el prompt">
+					<p>
+						El <code>$</code> no se escribe nunca. Forma parte del prompt, no del comando. Cuando copies
+						una orden de internet y veas <code>$ sudo apt update</code>, copia solo lo que va después del
+						dólar.
+					</p>
+				</CajaRefuerzo>
+			</section>
+
+			<section id="todo-cuelga" class="seccion">
+				<h2 class="titulo-seccion">Todo cuelga de /</h2>
+
+				<p class="parrafo">
+					Si vienes de Windows, tienes metido en la cabeza que el disco se llama <code>C:</code>, que el
+					pendrive es <code>E:</code> y que son sitios separados. En Linux eso no existe.
+				</p>
+
+				<p class="parrafo">
+					Aquí hay <strong>un solo árbol</strong>. Arriba del todo está la raíz, que se escribe con una
+					barra sola: <code>/</code>. De ella cuelga todo lo demás, y cuando conectas un disco nuevo no
+					aparece una letra: aparece una carpeta más dentro del mismo árbol.
+				</p>
+
+				<ArbolSVG />
+
+				<p class="parrafo">
+					De todas esas carpetas, la que te importa hoy es <code>/home/alex</code>: la tuya. Ahí están tus
+					documentos, tus fotos y tus descargas, y es donde la terminal te deja al abrirse.
+				</p>
+
+				<figure class="media">
+					<figcaption class="media-pie">
+						<span class="media-tipo">Audio</span>
+						Por qué en Linux todo cuelga de una sola raíz (1 min 30 s aprox.)
+					</figcaption>
+
+					<audio controls preload="none" class="mt-3 w-full max-w-[42rem]">
+						<source src="/media/te-mueves/audio-raiz.mp3" type="audio/mpeg" />
+						Tu navegador no puede reproducir el audio aquí mismo.{' '}
+						<a href="/media/te-mueves/audio-raiz.mp3">Descarga el audio en formato MP3</a>.
+					</audio>
+
+					<details class="detalle">
+						<summary>Transcripción del audio</summary>
+						<div class="detalle-cuerpo">
+							<p>
+								Si vienes de Windows, llevas años pensando en letras. El disco duro es C, el pendrive es
+								E, el disco externo es F. Cada uno es un mundo aparte, con su propia raíz, y para pasar
+								de uno a otro cambias de unidad.
+							</p>
+							<p>
+								En Linux eso no existe. No hay letras. Hay un único árbol, y arriba del todo hay una
+								barra sola: la raíz. De esa barra cuelga absolutamente todo lo que tiene el ordenador.
+							</p>
+							<p>
+								Dentro de la raíz hay carpetas con nombres cortos que al principio parecen crípticos.
+								Barra bin guarda los programas básicos, los que usas constantemente, como el propio ls.
+								Barra etc guarda la configuración del sistema, en archivos de texto que puedes abrir y
+								leer. Barra home es donde vive la gente: dentro hay una carpeta por cada persona que usa
+								el ordenador, y la tuya lleva tu nombre.
+							</p>
+							<p>
+								¿Y el pendrive? Cuando lo enchufas no aparece ninguna letra nueva. Aparece una carpeta,
+								normalmente dentro de barra media, y a partir de ese momento se recorre igual que
+								cualquier otra. Esto se llama montar un disco, y es una de las cosas que más desconcierta
+								al principio y que más cómoda resulta después.
+							</p>
+							<p>
+								La idea que te tienes que llevar es esta: en Linux no cambias de unidad, solo te mueves
+								por un árbol. Y como solo hay un árbol, cualquier cosa del ordenador tiene una única
+								dirección que empieza por barra. Eso es una ruta absoluta, y la vas a usar
+								constantemente.
+							</p>
+						</div>
+					</details>
+				</figure>
+
+				<CajaRefuerzo tipo="sabias" id="sabias-unidades" tema="las unidades y los pendrives">
+					<p>
+						Un pendrive en Linux no es <code>E:</code>. Al enchufarlo aparece como una carpeta, casi
+						siempre dentro de <code>/media</code>, y se recorre con <code>cd</code> igual que cualquier
+						otra. A eso se le llama <strong>montar</strong> un disco.
+					</p>
+				</CajaRefuerzo>
+			</section>
+
+			<section id="mirar" class="seccion">
+				<h2 class="titulo-seccion">Mirar antes de moverse</h2>
+
+				<p class="parrafo">
+					Ya sabes dónde estás. Ahora, qué tienes alrededor. Eso lo contesta <code>ls</code>, de{' '}
+					<em lang="en">list</em>:
+				</p>
+
+				<pre class="bloque"><code>alex@ubuntu:~$ ls
+Documentos  Fotos  notas.txt  proyecto</code></pre>
+
+				<p class="parrafo">
+					Fíjate en un detalle incómodo: <code>ls</code> a secas <strong>no distingue</strong> las
+					carpetas de los archivos. <code>Documentos</code> es una carpeta y <code>notas.txt</code> es un
+					archivo, pero los escribe igual. Para distinguirlos, pídele la versión larga con{' '}
+					<code>-l</code>:
+				</p>
+
+				<pre class="bloque"><code>alex@ubuntu:~$ ls -l
+total 16
+drwxr-xr-x 2 alex alex 4096 oct 11 10:24 Documentos
+drwxr-xr-x 2 alex alex 4096 oct 11 10:24 Fotos
+-rw-r--r-- 1 alex alex  318 oct 11 10:24 notas.txt
+drwxr-xr-x 2 alex alex 4096 oct 11 10:24 proyecto</code></pre>
+
+				<p class="parrafo">
+					Ahora sí. La <strong>primera letra</strong> de cada línea lo dice todo: una <code>d</code> es un
+					directorio y un guion <code>-</code> es un archivo normal. Lo que sigue son los permisos, que
+					verás en el tramo 03; después, quién es el dueño, el tamaño en bytes y la fecha del último
+					cambio.
+				</p>
+
+				<h3 class="subtitulo">Lo que no te está enseñando</h3>
+
+				<p class="parrafo">
+					Tu carpeta tiene más cosas de las que <code>ls</code> enseña. Todo lo que empieza por un punto
+					está oculto, y hace falta pedirlo con <code>-a</code>, de <em lang="en">all</em>:
+				</p>
+
+				<pre class="bloque"><code>alex@ubuntu:~$ ls -a
+.  ..  .bashrc  .config  Documentos  Fotos  notas.txt  proyecto</code></pre>
+
+				<p class="parrafo">
+					Han aparecido <code>.bashrc</code> y <code>.config</code>, que guardan tus preferencias, y dos
+					nombres raros: <code>.</code> es esta misma carpeta y <code>..</code> es la de arriba. No son
+					adorno, son los dos atajos que más vas a usar dentro de un momento.
+				</p>
+
+				<p class="parrafo">
+					Las opciones se combinan. <code>ls -la</code> es lo mismo que <code>ls -l -a</code>: lista
+					larga, incluidos los ocultos.
+				</p>
+
+				<CajaRefuerzo tipo="sabias" id="sabias-mayusculas" tema="mayúsculas y minúsculas en los nombres">
+					<p>
+						<code>Fotos</code> y <code>fotos</code> son dos carpetas distintas. Linux distingue mayúsculas
+						de minúsculas en todos los nombres, y Windows no. Es la causa del 90 % de los «pero si existe,
+						lo estoy viendo» de la primera semana.
+					</p>
+				</CajaRefuerzo>
+
+				<CajaRefuerzo tipo="recuerda" id="recuerda-ocultos" tema="los archivos ocultos">
+					<p>
+						Lo que empieza por punto está oculto. <code>ls</code> no lo enseña, <code>ls -a</code> sí. No
+						están escondidos por seguridad: es solo para que no te estorben.
+					</p>
+				</CajaRefuerzo>
+			</section>
+
+			<section id="moverse" class="seccion">
+				<h2 class="titulo-seccion">Moverse</h2>
+
+				<p class="parrafo">
+					El comando es <code>cd</code>, de <em lang="en">change directory</em>. Y aquí está la única idea
+					de verdad importante de la lección: hay <strong>dos formas de decir dónde quieres ir</strong>.
+				</p>
+
+				<p class="parrafo">
+					Una <strong>ruta absoluta</strong> empieza por <code>/</code> y da la dirección completa desde la
+					raíz. Es larga, pero funciona estés donde estés. Una <strong>ruta relativa</strong> no empieza
+					por <code>/</code> y cuenta desde la carpeta en la que ya estás. Es corta, pero depende de dónde
+					te encuentres.
+				</p>
+
+				<p class="parrafo">
+					Es la diferencia entre dar tu dirección postal completa y decir «la segunda puerta a la
+					derecha».
+				</p>
+
+				<div class="tabla-envoltorio">
+					<table class="tabla">
+						<caption class="tabla-pie">Formas de usar cd, con tu carpeta personal como punto de partida</caption>
+						<thead>
+							<tr>
+								<th scope="col">Escribes</th>
+								<th scope="col">Qué hace</th>
+							</tr>
+						</thead>
+						<tbody>
+							{
+								movimientos.map((m) => (
+									<tr>
+										<th scope="row"><code>{m.orden}</code></th>
+										<td>{m.efecto}</td>
+									</tr>
+								))
+							}
+						</tbody>
+					</table>
+				</div>
+
+				<p class="parrafo">
+					Cuando <code>cd</code> funciona no contesta nada. Esto desconcierta al principio, porque esperas
+					una confirmación, pero es la norma de la casa: si el comando ha ido bien, se calla. Para
+					comprobarlo, mira el prompt, que ya habrá cambiado, o pregunta con <code>pwd</code>.
+				</p>
+
+				<figure class="media">
+					<figcaption class="media-pie">
+						<span class="media-tipo">Vídeo</span>
+						Moverte por las carpetas, paso a paso en una terminal de verdad (2 min 30 s aprox.)
+					</figcaption>
+
+					<video
+						controls
+						preload="metadata"
+						poster="/media/te-mueves/poster.png"
+						class="mt-3 w-full max-w-[46rem] rounded-xl border-[3px] border-tinta"
+					>
+						<source src="/media/te-mueves/screencast.mp4" type="video/mp4" />
+						<track
+							kind="captions"
+							srclang="es"
+							label="Español"
+							default
+							src="/media/te-mueves/screencast.vtt"
+						/>
+						Tu navegador no puede reproducir el vídeo aquí mismo.{' '}
+						<a href="/media/te-mueves/screencast.mp4">Descarga el vídeo en formato MP4</a>.
+					</video>
+
+					<details class="detalle">
+						<summary>Transcripción del vídeo</summary>
+						<div class="detalle-cuerpo">
+							<p>
+								Esto es una terminal recién abierta. No da miedo: solo está esperando a que le digas
+								algo. Fíjate en esta línea: alex, arroba, ubuntu, dos puntos, virgulilla, dólar. Alex es
+								mi usuario, ubuntu es el nombre del equipo y la virgulilla es la carpeta donde estoy. El
+								dólar significa que está lista. Ese símbolo no se escribe nunca.
+							</p>
+							<p>
+								Primera orden: <code>pwd</code>, Enter. Me contesta <code>/home/alex</code>. Esa es mi
+								carpeta personal, la que la virgulilla abreviaba.
+							</p>
+							<p>
+								Ahora <code>ls</code>, para ver qué hay aquí dentro. Documentos, Fotos, proyecto y un
+								archivo de notas. Lo mismo que vería en el explorador de archivos.
+							</p>
+							<p>
+								Voy a entrar en Documentos: <code>cd</code>, espacio, Documentos. No ha dicho nada. En
+								Linux el silencio es buena señal: significa que ha funcionado. Lo compruebo en el prompt,
+								que ahora pone virgulilla barra Documentos, y con <code>pwd</code> lo confirmo.
+							</p>
+							<p>
+								Para subir un nivel: <code>cd</code>, espacio, punto, punto. Dos puntos seguidos siempre
+								significan la carpeta de arriba. Ya estoy otra vez en mi carpeta personal.
+							</p>
+							<p>
+								Hasta ahora he usado rutas relativas: cuentan desde donde estoy. También puedo dar la
+								dirección completa: <code>cd /home/alex/Fotos</code>. Eso es una ruta absoluta. Empieza
+								por barra y funciona desde cualquier sitio.
+							</p>
+							<p>
+								Para volver a casa desde donde sea: <code>cd ~</code>, o <code>cd</code> a secas. Y un
+								truco que gusta mucho: <code>cd -</code>, que me devuelve a la carpeta anterior. Es como
+								el botón de atrás del navegador: si lo repites, vas y vuelves entre dos carpetas.
+							</p>
+							<p>
+								Con <code>pwd</code>, <code>ls</code> y <code>cd</code> ya te mueves por todo el sistema.
+								Pruébalo en el simulador de la lección.
+							</p>
+						</div>
+					</details>
+				</figure>
+
+				<CajaRefuerzo tipo="sabias" id="sabias-tab" tema="la tecla Tab y el autocompletado">
+					<p>
+						La tecla <kbd>Tab</kbd> autocompleta. En una terminal de verdad escribes <code>cd Doc</code>,
+						pulsas <kbd>Tab</kbd> y ella termina la palabra por ti. Si hay varias opciones, púlsala dos
+						veces y te las enseña. Vas a escribir menos y a equivocarte mucho menos.
+					</p>
+					<p>
+						El simulador de esta página no hace autocompletado, así que ahí tendrás que escribir los
+						nombres enteros.
+					</p>
+				</CajaRefuerzo>
+
+				<CajaRefuerzo tipo="recuerda" id="recuerda-atajos" tema="los atajos de cd">
+					<ul>
+						<li><code>cd</code> a secas, sin nada detrás, te lleva siempre a tu carpeta personal.</li>
+						<li><code>..</code> es la carpeta de arriba. Se puede encadenar: <code>cd ../..</code> sube dos niveles.</li>
+						<li>Si te pierdes del todo, <code>cd</code> y vuelves a empezar.</li>
+					</ul>
+				</CajaRefuerzo>
+			</section>
+
+			<section id="pruebalo" class="seccion">
+				<h2 class="titulo-seccion">Pruébalo tú</h2>
+
+				<p class="parrafo">
+					Esto es una terminal falsa con un sistema de archivos inventado. Funciona de verdad: entiende{' '}
+					<code>pwd</code>, <code>ls</code> y <code>cd</code> con todas sus opciones, y te da los mismos
+					errores que te daría Ubuntu. No está conectada a nada, así que puedes escribir lo que quieras.
+				</p>
+
+				<h3 class="subtitulo">Cuatro cosas que probar</h3>
+				<ol class="mt-4 grid max-w-[64ch] gap-3">
+					<li class="resultado">
+						Pregunta <code>pwd</code> y compara la respuesta con lo que pone el prompt. ¿Ves que son la
+						misma carpeta?
+					</li>
+					<li class="resultado">
+						Haz <code>ls</code> y después <code>ls -a</code>. ¿Qué cuatro cosas aparecen solo en el
+						segundo?
+					</li>
+					<li class="resultado">
+						Entra en <code>Fotos</code>, mira lo que hay dentro y vuelve con <code>cd ..</code>. Luego haz
+						lo mismo con la ruta absoluta <code>cd /home/alex/Fotos</code>.
+					</li>
+					<li class="resultado">
+						Equivócate a propósito: escribe <code>cd noexiste</code> y lee el error entero. Después prueba{' '}
+						<code>cd notas.txt</code>, que falla por un motivo distinto.
+					</li>
+				</ol>
+
+				<div class="mt-8">
+					<Consola />
+				</div>
+
+				<CajaRefuerzo tipo="mas" id="mas-enlaces" tema="dónde seguir leyendo">
+					<p>Si quieres seguir por tu cuenta, estas cuatro fuentes son buenas y están al día:</p>
+					<ul>
+						{
+							enlaces.map((enlace) => (
+								<li>
+									<a href={enlace.href} target="_blank" rel="noopener noreferrer">
+										{enlace.texto}
+									</a>{' '}
+									<span class="text-tinta/80">({enlace.sitio})</span>
+									<span class="solo-lectores">. Se abre en una pestaña nueva.</span>
+								</li>
+							))
+						}
+					</ul>
+				</CajaRefuerzo>
+			</section>
+
+			<section id="resumen" class="seccion">
+				<h2 class="titulo-seccion">Resumen</h2>
+				<ul class="mt-5 grid max-w-[66ch] gap-3">
+					{resumen.map((punto) => <li class="resultado">{punto}</li>)}
+				</ul>
+			</section>
+
+			<section id="glosario" class="seccion">
+				<h2 class="titulo-seccion">Glosario</h2>
+				<dl class="mt-6 grid max-w-[70ch] gap-5">
+					{
+						glosario.map((item) => (
+							<div class="definicion">
+								<dt>{item.t}</dt>
+								<dd>{item.d}</dd>
+							</div>
+						))
+					}
+				</dl>
+			</section>
+
+			<section id="actividades" class="seccion">
+				<h2 class="titulo-seccion">Actividades</h2>
+				<p class="parrafo">
+					Próximamente. Aquí irán los ejercicios autocorregibles y la entrega de esta lección.
+				</p>
+			</section>
+		</article>
+	</main>
+
+	<footer class="border-t-[3px] border-tinta">
+		<div class="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-6 px-4 py-10 sm:px-8">
+			<p class="font-mono text-[0.78rem] text-tinta/70">
+				Tramo 02 del curso elr, aprende Linux sin romper nada.
+			</p>
+			<a href="/#ruta" class="volver">Volver al temario</a>
+		</div>
+	</footer>
+</Layout>
+
+<style>
+	.volver {
+		text-decoration-line: underline;
+		display: inline-block;
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: var(--color-tinta);
+		text-decoration-color: var(--color-uva);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 5px;
+	}
+
+	.volver:hover {
+		background: var(--color-lima);
+	}
+
+	.enlace {
+		text-decoration-line: underline;
+		color: var(--color-tinta);
+		text-decoration-color: var(--color-lima);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 4px;
+	}
+
+	.enlace:hover {
+		background: var(--color-lima);
+	}
+
+	.seccion {
+		margin-top: 4.5rem;
+		scroll-margin-top: 1.5rem;
+	}
+
+	.titulo-seccion {
+		max-width: 24ch;
+		font-size: clamp(1.55rem, 3.1vw, 2.2rem);
+		font-weight: 800;
+		letter-spacing: -0.02em;
+		line-height: 1.08;
+		padding-bottom: 0.7rem;
+		border-bottom: 3px solid var(--color-tinta);
+	}
+
+	.subtitulo {
+		margin-top: 2.5rem;
+		font-size: 1.2rem;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+	}
+
+	.parrafo {
+		margin-top: 1.4rem;
+		max-width: 66ch;
+		font-size: 1.02rem;
+		line-height: 1.65;
+		color: color-mix(in srgb, var(--color-tinta) 85%, var(--color-lila));
+	}
+
+	.resultado {
+		position: relative;
+		padding-left: 1.5rem;
+		max-width: 66ch;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: color-mix(in srgb, var(--color-tinta) 85%, var(--color-lila));
+	}
+
+	.resultado::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.55em;
+		width: 0.7rem;
+		height: 0.7rem;
+		border: 2px solid var(--color-tinta);
+		border-radius: 3px;
+		background: var(--color-lima);
+	}
+
+	.bloque {
+		margin-top: 1.5rem;
+		max-width: 46rem;
+		overflow-x: auto;
+		padding: 1rem 1.2rem;
+		border: 3px solid var(--color-tinta);
+		border-radius: 12px;
+		background: #fff;
+		box-shadow: 5px 5px 0 var(--color-uva);
+	}
+
+	.bloque code {
+		display: block;
+		padding: 0;
+		border: 0;
+		background: none;
+		font-size: 0.82rem;
+		line-height: 1.75;
+		white-space: pre;
+	}
+
+	@media (min-width: 640px) {
+		.bloque code {
+			font-size: 0.88rem;
+		}
+	}
+
+	.definicion dt {
+		font-weight: 800;
+		font-size: 1.02rem;
+	}
+
+	.definicion dd {
+		margin: 0.3rem 0 0;
+		max-width: 62ch;
+		font-size: 0.98rem;
+		line-height: 1.6;
+		color: color-mix(in srgb, var(--color-tinta) 85%, var(--color-lila));
+	}
+
+	.tabla-envoltorio {
+		margin-top: 1.8rem;
+		overflow-x: auto;
+		border: 3px solid var(--color-tinta);
+		border-radius: 12px;
+		background: #fff;
+	}
+
+	.tabla {
+		width: 100%;
+		min-width: 34rem;
+		border-collapse: collapse;
+		text-align: left;
+	}
+
+	.tabla-pie {
+		caption-side: bottom;
+		padding: 0.9rem 1.1rem;
+		border-top: 2px solid color-mix(in srgb, var(--color-tinta) 15%, transparent);
+		font-size: 0.88rem;
+		text-align: left;
+		color: color-mix(in srgb, var(--color-tinta) 80%, #fff);
+	}
+
+	.tabla th,
+	.tabla td {
+		padding: 0.85rem 1.1rem;
+		vertical-align: top;
+		font-size: 0.95rem;
+		line-height: 1.55;
+		border-bottom: 2px solid color-mix(in srgb, var(--color-tinta) 15%, transparent);
+	}
+
+	.tabla thead th {
+		background: var(--color-lila);
+		font-size: 0.88rem;
+		font-weight: 800;
+		border-bottom: 3px solid var(--color-tinta);
+	}
+
+	.tabla tbody th {
+		white-space: nowrap;
+		font-weight: 400;
+	}
+
+	.media {
+		margin: 2.5rem 0 0;
+	}
+
+	.media-pie {
+		max-width: 60ch;
+		font-size: 0.95rem;
+		font-weight: 600;
+		line-height: 1.5;
+	}
+
+	.media-tipo {
+		display: inline-block;
+		margin-right: 0.55rem;
+		padding: 0.12rem 0.55rem;
+		border: 2px solid var(--color-tinta);
+		border-radius: 999px;
+		background: var(--color-lima);
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
+		font-weight: 600;
+		vertical-align: 0.1em;
+	}
+
+	.detalle {
+		margin-top: 1.1rem;
+		max-width: 66ch;
+		border: 2px solid color-mix(in srgb, var(--color-tinta) 25%, transparent);
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.7);
+	}
+
+	.detalle summary {
+		padding: 0.8rem 1.1rem;
+		font-weight: 700;
+		font-size: 0.95rem;
+		cursor: pointer;
+	}
+
+	.detalle-cuerpo {
+		padding: 0 1.1rem 1.1rem;
+	}
+
+	.detalle-cuerpo :global(p) {
+		margin-top: 0.9rem;
+		font-size: 0.97rem;
+		line-height: 1.65;
+		color: color-mix(in srgb, var(--color-tinta) 85%, var(--color-lila));
+	}
+
+	audio {
+		color-scheme: light;
+	}
+</style>

@@ -1,0 +1,156 @@
+---
+
+---
+
+<div class="panel">
+	<div class="cabecera">Nueva máquina virtual</div>
+
+	<div class="campos">
+		<div class="fijo">
+			<span>Nombre</span>
+			<span class="dato">ubuntu-pruebas</span>
+		</div>
+
+		<div class="campo">
+			<label for="ram">Memoria RAM</label>
+			<span class="dato" id="valor-ram">4096 MB</span>
+			<input type="range" id="ram" min="1024" max="12288" step="512" value="4096" aria-describedby="veredicto" />
+		</div>
+
+		<div class="campo">
+			<label for="disco">Disco duro</label>
+			<span class="dato" id="valor-disco">25 GB</span>
+			<input type="range" id="disco" min="10" max="80" step="5" value="25" aria-describedby="veredicto" />
+		</div>
+
+		<div class="campo">
+			<label for="cpus">Procesadores</label>
+			<span class="dato" id="valor-cpus">2 núcleos</span>
+			<input type="range" id="cpus" min="1" max="6" step="1" value="2" aria-describedby="veredicto" />
+		</div>
+	</div>
+
+	<p class="veredicto" id="veredicto" aria-live="polite">
+		<span>Así va fino. Este es justo el tamaño que usamos en clase.</span>
+	</p>
+</div>
+
+<style>
+	.panel {
+		border: 3px solid var(--color-tinta);
+		border-radius: 14px;
+		background: #fff;
+		box-shadow: 7px 7px 0 var(--color-chicle);
+		overflow: hidden;
+	}
+
+	@media (min-width: 1024px) {
+		.panel {
+			box-shadow: 12px 12px 0 var(--color-chicle);
+		}
+	}
+
+	.cabecera {
+		padding: 0.75rem 1.2rem;
+		border-bottom: 3px solid var(--color-tinta);
+		background: var(--color-lila);
+		font-size: 0.95rem;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+	}
+
+	.campos {
+		padding: 1.3rem 1.2rem 1.5rem;
+		display: grid;
+		gap: 1.35rem;
+	}
+
+	.fijo,
+	.campo {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: baseline;
+		gap: 0.35rem 1rem;
+	}
+
+	.fijo span:first-child,
+	.campo label {
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	.dato {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		color: var(--color-uva);
+		font-weight: 600;
+	}
+
+	.campo input {
+		grid-column: 1 / -1;
+		width: 100%;
+		margin: 0.15rem 0 0;
+		accent-color: var(--color-uva);
+		cursor: grab;
+	}
+
+	.campo input:active {
+		cursor: grabbing;
+	}
+
+	.veredicto {
+		margin: 0;
+		padding: 1rem 1.2rem 1.25rem;
+		border-top: 3px solid var(--color-tinta);
+		background: var(--color-lila);
+		font-size: 0.95rem;
+		line-height: 1.5;
+		min-height: 5.1rem;
+	}
+
+	.veredicto span {
+		background: linear-gradient(to top, var(--color-lima) 0 0.3em, transparent 0.3em);
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+	}
+</style>
+
+<script>
+	const ram = document.getElementById('ram') as HTMLInputElement
+	const disco = document.getElementById('disco') as HTMLInputElement
+	const cpus = document.getElementById('cpus') as HTMLInputElement
+	const salida = document.querySelector('#veredicto span')!
+
+	const valores = {
+		ram: document.getElementById('valor-ram')!,
+		disco: document.getElementById('valor-disco')!,
+		cpus: document.getElementById('valor-cpus')!,
+	}
+
+	function evaluar() {
+		const r = Number(ram.value)
+		const d = Number(disco.value)
+		const c = Number(cpus.value)
+
+		valores.ram.textContent = `${r} MB`
+		valores.disco.textContent = `${d} GB`
+		valores.cpus.textContent = c === 1 ? '1 núcleo' : `${c} núcleos`
+
+		let texto: string
+		if (r < 2048) {
+			texto = 'Ubuntu arranca, pero el escritorio y el navegador se van a pelear por la memoria. Súbele la RAM.'
+		} else if (c < 2) {
+			texto = 'Con un solo núcleo todo responde con retraso. Dale dos y lo notas desde el primer arranque.'
+		} else if (d < 25) {
+			texto = 'Cabe el sistema y poco más. En cuanto instales un par de programas te quedas sin sitio.'
+		} else if (r > 8192) {
+			texto = 'Va sobrada, pero no le des más de la mitad de la RAM de tu ordenador: él también la necesita.'
+		} else {
+			texto = 'Así va fino. Este es justo el tamaño que usamos en clase.'
+		}
+		salida.textContent = texto
+	}
+
+	;[ram, disco, cpus].forEach((control) => control.addEventListener('input', evaluar))
+	evaluar()
+</script>

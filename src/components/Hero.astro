@@ -1,0 +1,41 @@
+---
+import Terminal from './Terminal.astro'
+---
+
+<section class="mx-auto max-w-[1180px] px-4 pb-14 pt-6 sm:px-8 lg:pb-24 lg:pt-10">
+	<div class="grid items-center gap-12 lg:grid-cols-[1fr_1.08fr] lg:gap-16">
+		<div>
+			<h1
+				class="font-display text-[clamp(2.8rem,6.4vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-balance"
+			>
+				Abre la terminal.<br />No se rompe nada.
+			</h1>
+
+			<p class="mt-6 max-w-[44ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-relaxed text-tinta/85">
+				Empiezas instalando el sistema, en una máquina virtual si prefieres ir sobre seguro, y acabas
+				encadenando comandos sin mirar la chuleta.
+			</p>
+
+			<div class="mt-9 flex flex-wrap items-center gap-3">
+				<a
+					href="#precio"
+					class="rounded-full border-[3px] border-tinta bg-chicle px-7 py-3.5 text-[1.05rem] font-extrabold text-tinta no-underline shadow-[5px_5px_0_var(--color-tinta)] transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
+				>
+					Empezar el curso
+				</a>
+				<a
+					href="#ruta"
+					class="px-2 py-3.5 text-[1.05rem] font-semibold text-tinta no-underline decoration-uva decoration-[3px] underline-offset-[6px] hover:underline"
+				>
+					Ver el temario
+				</a>
+			</div>
+
+			<p class="mt-7 max-w-[38ch] font-mono text-[0.78rem] leading-relaxed text-tinta/70">
+				12 semanas. Sin experiencia previa. Da igual si vienes de Windows o de Mac.
+			</p>
+		</div>
+
+		<Terminal />
+	</div>
+</section>

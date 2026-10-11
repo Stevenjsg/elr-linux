@@ -1,0 +1,55 @@
+---
+const pasos = [
+	{
+		titulo: 'Instalas',
+		texto: 'Ubuntu en una máquina virtual, o en el disco entero si vas con todo. Arrancamos juntos.',
+		href: '/modulos/1/',
+	},
+	{
+		titulo: 'Te mueves',
+		texto: 'Rutas, carpetas, archivos. Dejas de estar perdido y empiezas a saber dónde estás.',
+		href: '/modulos/2/',
+	},
+	{
+		titulo: 'Mandas',
+		texto: 'Permisos, usuarios y sudo. Quién puede hacer qué, y por qué a veces te dice que no.',
+	},
+	{
+		titulo: 'Automatizas',
+		texto: 'Tuberías, scripts y tareas programadas. A partir de aquí trabaja el ordenador.',
+	},
+]
+---
+
+<section id="ruta" class="border-t-[3px] border-tinta">
+	<div class="mx-auto max-w-[1180px] px-4 py-14 sm:px-8 lg:py-20">
+		<h2 class="max-w-[22ch] text-[clamp(1.6rem,3.2vw,2.4rem)] font-extrabold leading-[1.05] tracking-[-0.02em]">
+			Cuatro tramos, en este orden y sin saltarse ninguno.
+		</h2>
+
+		<ol class="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+			{
+				pasos.map((paso, i) => (
+					<li class="border-t-2 border-uva pt-4">
+						<span class="font-mono text-[0.75rem] font-semibold text-uva">
+							0{i + 1}
+						</span>
+						<h3 class="mt-2 text-[1.35rem] font-extrabold tracking-[-0.01em]">
+							{paso.href ? (
+								<a
+									href={paso.href}
+									class="text-tinta underline decoration-lima decoration-[4px] underline-offset-[5px] hover:bg-lima"
+								>
+									{paso.titulo}
+								</a>
+							) : (
+								paso.titulo
+							)}
+						</h3>
+						<p class="mt-2 max-w-[32ch] text-[0.95rem] leading-relaxed text-tinta/80">{paso.texto}</p>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</section>

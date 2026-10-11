@@ -1,17 +1,41 @@
 ---
-
+import Layout from '../layouts/Layouts.astro'
+import Nav from '../components/Nav.astro'
+import Hero from '../components/Hero.astro'
+import Ruta from '../components/Ruta.astro'
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+	<Nav />
+	<main id="contenido">
+		<Hero />
+		<Ruta />
+
+		<section id="precio" class="border-t-[3px] border-tinta">
+			<div class="mx-auto max-w-[1180px] px-4 py-14 sm:px-8 lg:py-20">
+				<h2 class="max-w-[20ch] text-[clamp(1.6rem,3.2vw,2.4rem)] font-extrabold leading-[1.05] tracking-[-0.02em]">
+					Precio y matrícula
+				</h2>
+				<p class="mt-5 max-w-[52ch] text-[1.02rem] leading-relaxed text-tinta/85">
+					Próximamente. Aquí irán las condiciones de matrícula y las fechas de la próxima
+					convocatoria. Mientras tanto, el temario completo está más arriba y el{' '}
+					<a href="/modulos/2/" class="enlace-precio">tramo 02 ya se puede leer entero</a>.
+				</p>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.enlace-precio {
+		text-decoration-line: underline;
+		color: var(--color-tinta);
+		text-decoration-color: var(--color-lima);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 4px;
+	}
+
+	.enlace-precio:hover {
+		background: var(--color-lima);
+	}
+</style>

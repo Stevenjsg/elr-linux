@@ -1,0 +1,313 @@
+---
+const chips = ['ls', 'pwd', 'cd proyecto', 'chmod +x deploy.sh', 'grep error registro.log', 'sudo apt install cowsay']
+---
+
+<div class="terminal">
+	<div class="barra">
+		<span class="punto" style="background:#ff3d8b"></span>
+		<span class="punto" style="background:#a8e80b"></span>
+		<span class="punto" style="background:#fff"></span>
+		<span class="titulo">tu-primera-terminal</span>
+	</div>
+
+	<div class="cuerpo" id="cuerpo">
+		<div id="historial" aria-live="polite"></div>
+		<div class="linea">
+			<span class="signo">$</span><span id="escrito"></span><span class="cursor" id="cursor"></span>
+		</div>
+	</div>
+
+	<div class="chips">
+		<span class="pista">Pruébalos:</span>
+		{chips.map((c) => <button type="button" class="chip" data-cmd={c}>{c}</button>)}
+	</div>
+</div>
+
+<label class="oculto" for="entrada">Escribe un comando y pulsa Enter</label>
+<input id="entrada" class="oculto" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+
+<style>
+	.terminal {
+		border: 3px solid var(--color-tinta);
+		border-radius: 14px;
+		background: #fff;
+		box-shadow: 7px 7px 0 var(--color-uva);
+		overflow: hidden;
+	}
+
+	@media (min-width: 1024px) {
+		.terminal {
+			box-shadow: 12px 12px 0 var(--color-uva);
+		}
+	}
+
+	.barra {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		padding: 0.6rem 0.9rem;
+		background: var(--color-uva);
+		border-bottom: 3px solid var(--color-tinta);
+	}
+
+	.punto {
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		border: 1.5px solid var(--color-tinta);
+	}
+
+	.titulo {
+		margin-left: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: #fff;
+	}
+
+	.cuerpo {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		line-height: 1.7;
+		padding: 1.1rem 1rem 1.3rem;
+		min-height: 13rem;
+		max-height: 22rem;
+		overflow: auto;
+		cursor: text;
+	}
+
+	@media (min-width: 640px) {
+		.cuerpo {
+			font-size: 0.85rem;
+			padding: 1.4rem 1.3rem 1.6rem;
+			min-height: 15rem;
+		}
+	}
+
+	:global(.signo) {
+		color: var(--color-uva);
+		font-weight: 600;
+		margin-right: 0.6ch;
+	}
+
+	:global(.linea) {
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.cursor {
+		display: inline-block;
+		width: 0.6ch;
+		height: 1.05em;
+		vertical-align: -0.18em;
+		background: var(--color-tinta);
+		animation: parpadeo 1.1s steps(1) infinite;
+	}
+
+	@keyframes parpadeo {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	:global(.salida) {
+		white-space: pre;
+		overflow-x: auto;
+		color: color-mix(in srgb, var(--color-tinta) 80%, #fff);
+	}
+
+	:global(.nota) {
+		margin: 0.15rem 0 1.1rem;
+		font-family: var(--font-display);
+		font-size: 0.95rem;
+		line-height: 1.45;
+		max-width: 46ch;
+	}
+
+	:global(.nota span) {
+		background: linear-gradient(to top, var(--color-lima) 0 0.3em, transparent 0.3em);
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.85rem 1rem;
+		border-top: 3px solid var(--color-tinta);
+		background: var(--color-lila);
+	}
+
+	.pista {
+		font-family: var(--font-display);
+		font-size: 0.8rem;
+		font-weight: 600;
+		margin-right: 0.15rem;
+	}
+
+	.chip {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		padding: 0.3rem 0.65rem;
+		border: 2px solid var(--color-tinta);
+		border-radius: 999px;
+		background: #fff;
+		color: var(--color-tinta);
+		cursor: pointer;
+		transition: background-color 0.15s ease;
+	}
+
+	.chip:hover:not(:disabled) {
+		background: var(--color-lima);
+	}
+
+	.chip:disabled {
+		opacity: 0.45;
+		cursor: default;
+	}
+
+	.oculto {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
+	}
+</style>
+
+<script>
+	const COMANDOS: Record<string, { salida: string[]; nota: string }> = {
+		ls: {
+			salida: ['Descargas   apuntes.txt   fotos/   proyecto/'],
+			nota: 'ls te enseña qué hay en la carpeta donde estás. Es mirar alrededor.',
+		},
+		pwd: {
+			salida: ['/home/tu-nombre'],
+			nota: 'pwd te dice dónde estás. Cuando te pierdas, empieza siempre por aquí.',
+		},
+		'cd proyecto': {
+			salida: [],
+			nota: 'cd te mueve de carpeta. Cuando sale bien, Linux no dice nada: el silencio es buena señal.',
+		},
+		'chmod +x deploy.sh': {
+			salida: [],
+			nota: 'Le das permiso al archivo para ejecutarse. A partir de ahora deploy.sh se puede arrancar.',
+		},
+		'grep error registro.log': {
+			salida: ['registro.log:42: error: no encuentro la base de datos'],
+			nota: 'grep busca texto dentro de archivos. Te da la aguja y se salta el pajar.',
+		},
+		'sudo apt install cowsay': {
+			salida: [
+				'Instalando cowsay... hecho.',
+				'',
+				' ___________________________',
+				'< Ya sabes usar la terminal >',
+				' ---------------------------',
+				'        \\   ^__^',
+				'         \\  (oo)\\_______',
+				'            (__)\\       )\\/\\',
+				'                ||----w |',
+				'                ||     ||',
+			],
+			nota: 'sudo ejecuta el comando como administrador. Es poder de verdad, así que léelo dos veces antes de darle.',
+		},
+	}
+
+	const cuerpo = document.getElementById('cuerpo')!
+	const historial = document.getElementById('historial')!
+	const escrito = document.getElementById('escrito')!
+	const cursor = document.getElementById('cursor')!
+	const entrada = document.getElementById('entrada') as HTMLInputElement
+	const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'))
+
+	const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+	let ocupado = false
+
+	const abajo = () => (cuerpo.scrollTop = cuerpo.scrollHeight)
+
+	function bloquear(estado: boolean) {
+		ocupado = estado
+		chips.forEach((chip) => (chip.disabled = estado))
+		cursor.style.visibility = estado ? 'hidden' : ''
+	}
+
+	function ejecutar(comando: string) {
+		const orden = comando.trim()
+		if (!orden) return
+
+		const eco = document.createElement('div')
+		eco.className = 'linea'
+		eco.innerHTML = '<span class="signo">$</span>'
+		eco.append(orden)
+		historial.append(eco)
+
+		const receta = COMANDOS[orden] ?? {
+			salida: [`${orden.split(' ')[0]}: orden no encontrada`],
+			nota: 'Ese todavía no lo hemos dado. Prueba con uno de los de abajo.',
+		}
+
+		if (receta.salida.length) {
+			const salida = document.createElement('div')
+			salida.className = 'salida'
+			salida.textContent = receta.salida.join('\n')
+			historial.append(salida)
+		}
+
+		const nota = document.createElement('p')
+		nota.className = 'nota'
+		const marca = document.createElement('span')
+		marca.textContent = receta.nota
+		nota.append(marca)
+		historial.append(nota)
+
+		escrito.textContent = ''
+		entrada.value = ''
+		abajo()
+	}
+
+	function teclear(comando: string) {
+		if (ocupado) return
+		bloquear(true)
+		escrito.textContent = ''
+		entrada.value = ''
+
+		if (sinMovimiento) {
+			escrito.textContent = comando
+			ejecutar(comando)
+			bloquear(false)
+			return
+		}
+
+		let i = 0
+		const reloj = setInterval(() => {
+			escrito.textContent = comando.slice(0, ++i)
+			abajo()
+			if (i < comando.length) return
+			clearInterval(reloj)
+			setTimeout(() => {
+				ejecutar(comando)
+				bloquear(false)
+			}, 260)
+		}, 55)
+	}
+
+	chips.forEach((chip) => chip.addEventListener('click', () => teclear(chip.dataset.cmd!)))
+
+	cuerpo.addEventListener('click', () => {
+		if (!ocupado) entrada.focus({ preventScroll: true })
+	})
+
+	entrada.addEventListener('input', () => {
+		if (!ocupado) escrito.textContent = entrada.value
+	})
+
+	entrada.addEventListener('keydown', (evento) => {
+		if (evento.key !== 'Enter' || ocupado) return
+		evento.preventDefault()
+		ejecutar(entrada.value)
+	})
+
+	setTimeout(() => teclear('ls'), sinMovimiento ? 0 : 650)
+</script>

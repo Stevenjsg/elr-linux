@@ -1,0 +1,92 @@
+---
+// Arbol de directorios. El SVG es role="img" y se describe por completo en
+// <title> + <desc>, para que quien no lo ve reciba la misma informacion.
+const ramas = [
+	{ x: 80, y: 76, ancho: 92, texto: '/bin', nota: 'programas básicos' },
+	{ x: 80, y: 126, ancho: 92, texto: '/etc', nota: 'configuración' },
+	{ x: 80, y: 176, ancho: 110, texto: '/home', nota: 'las personas' },
+	{ x: 80, y: 376, ancho: 92, texto: '/tmp', nota: 'cosas de usar y tirar' },
+	{ x: 80, y: 426, ancho: 92, texto: '/usr', nota: 'el resto de programas' },
+]
+---
+
+<figure class="my-10">
+	<div class="overflow-x-auto rounded-xl border-[3px] border-tinta bg-white p-4 shadow-[7px_7px_0_var(--color-uva)] sm:p-6">
+		<svg
+			role="img"
+			aria-labelledby="arbol-titulo arbol-desc"
+			viewBox="0 0 660 486"
+			class="h-auto w-full min-w-[480px]"
+		>
+			<title id="arbol-titulo">Árbol de directorios de Linux a partir de la raíz</title>
+			<desc id="arbol-desc">
+				Diagrama en forma de árbol. En lo más alto está la raíz, que se escribe con una sola barra.
+				De ella cuelgan cinco carpetas: bin, con los programas básicos; etc, con la configuración;
+				home, donde está la gente; tmp, para cosas de usar y tirar; y usr, con el resto de programas.
+				Dentro de home hay una carpeta llamada alex, que es la carpeta personal de esa persona y se
+				abrevia con una virgulilla. Dentro de alex hay dos carpetas más: Documentos y Fotos. No hay
+				ninguna letra de unidad como C o D: absolutamente todo cuelga de la misma raíz.
+			</desc>
+
+			<g stroke="var(--color-uva)" stroke-width="2.5" fill="none" stroke-linecap="round">
+				<path d="M40 50 V 443" />
+				<path d="M40 93 H 80 M40 143 H 80 M40 193 H 80 M40 393 H 80 M40 443 H 80" />
+				<path d="M104 210 V 243 M104 243 H 144" />
+				<path d="M168 260 V 343 M168 293 H 208 M168 343 H 208" />
+			</g>
+
+			<g font-family="var(--font-mono)" font-size="15" font-weight="600">
+				<rect x="16" y="16" width="56" height="34" rx="7" fill="var(--color-uva)" stroke="var(--color-tinta)" stroke-width="2.5" />
+				<text x="44" y="38" fill="#ffffff" text-anchor="middle">/</text>
+				<text x="88" y="38" fill="var(--color-tinta)" font-size="13.5" font-weight="400" font-family="var(--font-display)">la raíz: aquí empieza todo</text>
+
+				{
+					ramas.map((rama) => (
+						<>
+							<rect
+								x={rama.x}
+								y={rama.y}
+								width={rama.ancho}
+								height={34}
+								rx={7}
+								fill="#ffffff"
+								stroke="var(--color-tinta)"
+								stroke-width="2.5"
+							/>
+							<text x={rama.x + 14} y={rama.y + 22} fill="var(--color-tinta)">
+								{rama.texto}
+							</text>
+							<text
+								x={rama.x + rama.ancho + 14}
+								y={rama.y + 22}
+								fill="var(--color-tinta)"
+								font-size="13.5"
+								font-weight="400"
+								font-family="var(--font-display)"
+							>
+								{rama.nota}
+							</text>
+						</>
+					))
+				}
+
+				<rect x="144" y="226" width="124" height="34" rx="7" fill="var(--color-lima)" stroke="var(--color-tinta)" stroke-width="2.5" />
+				<text x="158" y="248" fill="var(--color-tinta)">/home/alex</text>
+				<text x="282" y="243" fill="var(--color-tinta)" font-size="13.5" font-weight="400" font-family="var(--font-display)">tu carpeta personal,</text>
+				<text x="282" y="259" fill="var(--color-tinta)" font-size="13.5" font-weight="400" font-family="var(--font-display)">la misma que llamamos ~</text>
+
+				<rect x="208" y="276" width="140" height="34" rx="7" fill="#ffffff" stroke="var(--color-tinta)" stroke-width="2.5" />
+				<text x="222" y="298" fill="var(--color-tinta)">Documentos</text>
+
+				<rect x="208" y="326" width="96" height="34" rx="7" fill="#ffffff" stroke="var(--color-tinta)" stroke-width="2.5" />
+				<text x="222" y="348" fill="var(--color-tinta)">Fotos</text>
+			</g>
+		</svg>
+	</div>
+
+	<figcaption class="mt-4 max-w-[64ch] text-[0.92rem] leading-relaxed text-tinta/80">
+		El árbol de directorios de Linux. Todo cuelga de la raíz <code>/</code>, incluidos los discos que
+		conectes: no existen <code>C:</code> ni <code>D:</code>. Tu carpeta personal, resaltada, es{' '}
+		<code>/home/alex</code>, y se abrevia <code>~</code>.
+	</figcaption>
+</figure>

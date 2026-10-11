@@ -1,0 +1,191 @@
+---
+import Layout from '../../layouts/Layouts.astro'
+import Nav from '../../components/Nav.astro'
+import ConfigVM from '../../components/ConfigVM.astro'
+
+const requisitos = [
+	'25 GB libres en el disco',
+	'4 GB de RAM (con 8 vas holgado)',
+	'Windows, macOS o Linux, da igual cuál',
+	'Hora y media sin prisa',
+]
+
+const clases = [
+	{
+		titulo: 'Qué es una máquina virtual',
+		texto: 'Un ordenador entero dentro de una ventana, con su disco y su memoria prestados del tuyo.',
+		duracion: '12 min',
+	},
+	{
+		titulo: 'Instalas VirtualBox',
+		texto: 'El mismo programa en los tres sistemas. Lo bajamos, lo instalamos y lo abrimos juntos.',
+		duracion: '15 min',
+	},
+	{
+		titulo: 'Descargas Ubuntu',
+		texto: 'Qué es una ISO, cuál de las versiones bajar y cómo comprobar que no llegó rota.',
+		duracion: '10 min',
+	},
+	{
+		titulo: 'Creas la máquina',
+		texto: 'RAM, disco y procesadores. Aquí decides cuánto ordenador le prestas, y por qué.',
+		duracion: '20 min',
+	},
+	{
+		titulo: 'Instalas el sistema',
+		texto: 'Idioma, teclado, particiones y tu usuario. El instalador pregunta menos de lo que temes.',
+		duracion: '25 min',
+	},
+	{
+		titulo: 'Primer arranque y copia',
+		texto: 'Guardas una instantánea de la máquina recién hecha. A partir de aquí ya puedes romper cosas.',
+		duracion: '15 min',
+	},
+]
+
+const problemas = [
+	{
+		p: 'Sale un error con VT-x o AMD-V y la máquina no arranca',
+		r: 'La virtualización viene apagada de fábrica en muchos portátiles. Se enciende en la BIOS, en un sitio concreto, y te enseño a encontrarlo en los tres fabricantes más comunes.',
+	},
+	{
+		p: 'Solo me deja elegir sistemas de 32 bits',
+		r: 'Es el mismo problema de arriba con otra cara. Enciendes la virtualización y aparecen las opciones de 64 bits.',
+	},
+	{
+		p: 'Ubuntu va lentísimo',
+		r: 'Casi siempre es RAM de menos o la aceleración gráfica apagada. Son dos ajustes y se arregla en un minuto.',
+	},
+	{
+		p: 'La ventana se queda pequeña y con bordes negros',
+		r: 'Faltan las Guest Additions. Se instalan desde el propio menú de VirtualBox y la pantalla pasa a ajustarse sola.',
+	},
+]
+---
+
+<Layout
+	title="Módulo 01 — Máquinas virtuales e instalación de Ubuntu | elr"
+	description="Monta un Ubuntu dentro de una ventana con VirtualBox y aprende a dimensionarlo. Seis clases, hora y media, sin tocar tu sistema de verdad."
+>
+	<Nav />
+
+	<main id="contenido">
+		<section class="mx-auto max-w-[1180px] px-4 pb-16 pt-4 sm:px-8 lg:pb-24 lg:pt-8">
+			<div class="grid items-start gap-12 lg:grid-cols-[1fr_0.92fr] lg:gap-16">
+				<div>
+					<p class="flex flex-wrap items-center gap-x-6 gap-y-1 font-mono text-[0.78rem] font-semibold text-uva">
+						<span>Módulo 01</span>
+						<span class="text-tinta/70">6 clases</span>
+						<span class="text-tinta/70">1 h 37 min</span>
+					</p>
+
+					<h1
+						class="mt-5 text-[clamp(2.6rem,5.6vw,4rem)] font-extrabold leading-[0.95] tracking-[-0.035em] text-balance"
+					>
+						Monta un ordenador que puedas romper.
+					</h1>
+
+					<p class="mt-6 max-w-[46ch] text-[clamp(1.02rem,1.5vw,1.18rem)] leading-relaxed text-tinta/85">
+						Antes de tocar un solo comando te montas un Ubuntu dentro de una ventana. Si la lías,
+						rebobinas en diez segundos y en tu ordenador de verdad no ha pasado nada.
+					</p>
+
+					<h2 class="mt-10 text-[1.05rem] font-extrabold">Lo que necesitas</h2>
+					<ul class="mt-4 grid gap-2.5">
+						{
+							requisitos.map((requisito) => (
+								<li class="flex items-baseline gap-3 text-[0.98rem] text-tinta/85">
+									<span class="mt-0.5 h-3 w-3 shrink-0 rounded-[3px] border-2 border-tinta bg-lima" />
+									{requisito}
+								</li>
+							))
+						}
+					</ul>
+
+					<p class="mt-8 max-w-[44ch] text-[0.95rem] leading-relaxed text-tinta/70">
+						¿Prefieres instalarlo en el disco entero y olvidarte de la ventana? Al final del módulo
+						hay una clase extra sobre arranque dual y lo que conviene saber antes.
+					</p>
+				</div>
+
+				<div class="lg:pt-16">
+					<ConfigVM />
+					<p class="mt-5 max-w-[42ch] text-[0.92rem] leading-relaxed text-tinta/70">
+						Este es el diálogo de la clase 4. Muévelo y mira qué pasa: dimensionar la máquina es la
+						decisión que más se nota después.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="border-t-[3px] border-tinta">
+			<div class="mx-auto max-w-[1180px] px-4 py-14 sm:px-8 lg:py-20">
+				<h2 class="text-[clamp(1.6rem,3.2vw,2.3rem)] font-extrabold leading-[1.05] tracking-[-0.02em]">
+					Las seis clases
+				</h2>
+
+				<ol class="mt-10 max-w-[940px] border-t-2 border-tinta/15">
+					{
+						clases.map((clase, i) => (
+							<li class="grid grid-cols-[2.5rem_1fr] items-baseline gap-x-3 border-b-2 border-tinta/15 py-5 sm:grid-cols-[3.5rem_1fr_auto] sm:gap-x-6">
+								<span class="font-mono text-[0.78rem] font-semibold text-uva">0{i + 1}</span>
+								<div>
+									<h3 class="text-[1.2rem] font-extrabold tracking-[-0.01em]">{clase.titulo}</h3>
+									<p class="mt-1.5 max-w-[56ch] text-[0.95rem] leading-relaxed text-tinta/80">
+										{clase.texto}
+									</p>
+								</div>
+								<span class="col-start-2 mt-2 font-mono text-[0.75rem] text-tinta/70 sm:col-start-3 sm:mt-0">
+									{clase.duracion}
+								</span>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
+
+		<section class="border-t-[3px] border-tinta">
+			<div class="mx-auto max-w-[1180px] px-4 py-14 sm:px-8 lg:py-20">
+				<h2 class="max-w-[24ch] text-[clamp(1.6rem,3.2vw,2.3rem)] font-extrabold leading-[1.05] tracking-[-0.02em]">
+					Si algo sale mal, suele ser una de estas cuatro.
+				</h2>
+
+				<dl class="mt-10 grid gap-x-12 gap-y-9 sm:grid-cols-2">
+					{
+						problemas.map((problema) => (
+							<div class="border-l-[3px] border-chicle pl-5">
+								<dt class="text-[1.05rem] font-extrabold leading-snug">{problema.p}</dt>
+								<dd class="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-tinta/80">
+									{problema.r}
+								</dd>
+							</div>
+						))
+					}
+				</dl>
+			</div>
+		</section>
+
+		<section class="border-t-[3px] border-tinta">
+			<div
+				class="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-8 px-4 py-14 sm:px-8 lg:py-16"
+			>
+				<div>
+					<h2 class="max-w-[20ch] text-[clamp(1.4rem,2.6vw,1.9rem)] font-extrabold leading-[1.1] tracking-[-0.02em]">
+						Al acabar tienes un Ubuntu tuyo y una copia a la que volver.
+					</h2>
+					<p class="mt-4 font-mono text-[0.78rem] text-tinta/70">
+						Después viene el módulo 02: moverte por el sistema.
+					</p>
+				</div>
+
+				<a
+					href="/#precio"
+					class="rounded-full border-[3px] border-tinta bg-chicle px-7 py-3.5 text-[1.05rem] font-extrabold text-tinta no-underline shadow-[5px_5px_0_var(--color-tinta)] transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
+				>
+					Empezar el curso
+				</a>
+			</div>
+		</section>
+	</main>
+</Layout>

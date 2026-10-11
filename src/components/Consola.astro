@@ -1,0 +1,514 @@
+---
+const sugerencias = ['pwd', 'ls -a', 'cd Fotos', 'cd ..', 'cd ~', 'help']
+---
+
+<div class="consola">
+	<p id="consola-ayuda" class="instruccion">
+		Escribe un comando y pulsa <kbd>Enter</kbd>. Con las flechas <kbd>↑</kbd> y <kbd>↓</kbd> recuperas
+		lo que ya has escrito. No es tu ordenador: aquí no se rompe nada.
+	</p>
+
+	<div class="marco">
+		<div class="barra">
+			<span class="punto" style="background:#ff3d8b"></span>
+			<span class="punto" style="background:#a8e80b"></span>
+			<span class="punto" style="background:#fff"></span>
+			<span class="titulo">simulador</span>
+			<button type="button" id="consola-reiniciar" class="reiniciar">Reiniciar</button>
+		</div>
+
+		<div class="cuerpo" id="consola-cuerpo">
+			<div id="consola-salida" role="log" aria-live="polite"></div>
+
+			<div class="linea-entrada">
+				<label for="consola-entrada" id="consola-etiqueta" class="solo-lectores">
+					Escribe un comando de terminal. Carpeta actual: ~
+				</label>
+				<span class="prompt" id="consola-prompt">alex@ubuntu:~$</span>
+				<input
+					id="consola-entrada"
+					type="text"
+					autocomplete="off"
+					autocapitalize="off"
+					autocorrect="off"
+					spellcheck="false"
+					aria-describedby="consola-ayuda"
+				/>
+			</div>
+		</div>
+
+		<div class="sugerencias">
+			<span class="pista">Sugerencias:</span>
+			{sugerencias.map((s) => <button type="button" class="chip" data-cmd={s}>{s}</button>)}
+		</div>
+	</div>
+</div>
+
+<style>
+	.instruccion {
+		max-width: 62ch;
+		margin: 0 0 1rem;
+		font-size: 0.97rem;
+		line-height: 1.55;
+		color: color-mix(in srgb, var(--color-tinta) 85%, var(--color-lila));
+	}
+
+	kbd {
+		font-family: var(--font-mono);
+		font-size: 0.78em;
+		padding: 0.12em 0.42em;
+		border: 2px solid var(--color-tinta);
+		border-radius: 5px;
+		background: #fff;
+		white-space: nowrap;
+	}
+
+	.marco {
+		border: 3px solid var(--color-tinta);
+		border-radius: 14px;
+		background: #fff;
+		box-shadow: 7px 7px 0 var(--color-uva);
+		overflow: hidden;
+	}
+
+	@media (min-width: 1024px) {
+		.marco {
+			box-shadow: 12px 12px 0 var(--color-uva);
+		}
+	}
+
+	.barra {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		padding: 0.55rem 0.9rem;
+		background: var(--color-uva);
+		border-bottom: 3px solid var(--color-tinta);
+	}
+
+	.punto {
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		border: 1.5px solid var(--color-tinta);
+	}
+
+	.titulo {
+		margin-left: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: #fff;
+	}
+
+	.reiniciar {
+		margin-left: auto;
+		font-family: var(--font-display);
+		font-size: 0.78rem;
+		font-weight: 700;
+		padding: 0.25rem 0.75rem;
+		border: 2px solid var(--color-tinta);
+		border-radius: 999px;
+		background: #fff;
+		color: var(--color-tinta);
+		cursor: pointer;
+	}
+
+	.reiniciar:hover {
+		background: var(--color-lima);
+	}
+
+	.cuerpo {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		line-height: 1.7;
+		padding: 1rem;
+		height: 22rem;
+		overflow: auto;
+		cursor: text;
+	}
+
+	@media (min-width: 640px) {
+		.cuerpo {
+			font-size: 0.85rem;
+			padding: 1.2rem;
+		}
+	}
+
+	.linea-entrada {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6ch;
+		flex-wrap: wrap;
+	}
+
+	.prompt {
+		color: var(--color-uva);
+		font-weight: 600;
+		white-space: pre;
+	}
+
+	#consola-entrada {
+		flex: 1 1 10ch;
+		min-width: 10ch;
+		border: 0;
+		padding: 0;
+		background: transparent;
+		font: inherit;
+		color: var(--color-tinta);
+		caret-color: var(--color-uva);
+	}
+
+	#consola-entrada:focus {
+		outline: 2px solid var(--color-uva);
+		outline-offset: 3px;
+		border-radius: 3px;
+	}
+
+	.sugerencias {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.85rem 1rem;
+		border-top: 3px solid var(--color-tinta);
+		background: var(--color-lila);
+	}
+
+	.pista {
+		font-size: 0.8rem;
+		font-weight: 700;
+		margin-right: 0.15rem;
+	}
+
+	.chip {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		padding: 0.3rem 0.65rem;
+		border: 2px solid var(--color-tinta);
+		border-radius: 999px;
+		background: #fff;
+		color: var(--color-tinta);
+		cursor: pointer;
+	}
+
+	.chip:hover {
+		background: var(--color-lima);
+	}
+
+	:global(#consola-salida .eco) {
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	:global(#consola-salida .eco .prompt) {
+		color: var(--color-uva);
+		font-weight: 600;
+	}
+
+	:global(#consola-salida .texto) {
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	:global(#consola-salida .aviso) {
+		white-space: pre-wrap;
+		color: color-mix(in srgb, var(--color-tinta) 80%, #fff);
+	}
+</style>
+
+<script>
+	type Nodo = { nombre: string; tipo: 'd' | '-'; tam: number; hijos?: Nodo[] }
+
+	const d = (nombre: string, hijos: Nodo[] = []): Nodo => ({ nombre, tipo: 'd', tam: 4096, hijos })
+	const f = (nombre: string, tam: number): Nodo => ({ nombre, tipo: '-', tam })
+
+	const RAIZ: Nodo = d('/', [
+		d('bin', [f('bash', 1234376), f('cd', 35112), f('ls', 142312), f('pwd', 39288)]),
+		d('etc', [f('hostname', 12), f('passwd', 2918)]),
+		d('home', [
+			d('alex', [
+				d('.config', [f('ajustes.conf', 412)]),
+				d('Documentos', [f('apuntes-linux.md', 3184), f('cv.pdf', 92841)]),
+				d('Fotos', [f('perfil.jpg', 184233), d('vacaciones', [f('playa.jpg', 2318422)])]),
+				d('proyecto', [f('deploy.sh', 318), f('README.md', 1042)]),
+				f('.bashrc', 3771),
+				f('notas.txt', 318),
+			]),
+		]),
+		d('tmp'),
+		d('usr', [d('bin'), d('share')]),
+	])
+
+	const CASA = '/home/alex'
+	const FECHA = 'oct 11 10:24'
+
+	const cuerpo = document.getElementById('consola-cuerpo') as HTMLElement
+	const salida = document.getElementById('consola-salida') as HTMLElement
+	const entrada = document.getElementById('consola-entrada') as HTMLInputElement
+	const etiqueta = document.getElementById('consola-etiqueta') as HTMLElement
+	const promptEl = document.getElementById('consola-prompt') as HTMLElement
+	const reiniciar = document.getElementById('consola-reiniciar') as HTMLButtonElement
+	const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.consola .chip'))
+
+	let actual = CASA
+	let anterior = CASA
+	const historial: string[] = []
+	let indiceHistorial = 0
+
+	/** Convierte la ruta absoluta en la forma corta que muestra el prompt. */
+	function corto(ruta: string): string {
+		if (ruta === CASA) return '~'
+		if (ruta.startsWith(CASA + '/')) return '~' + ruta.slice(CASA.length)
+		return ruta
+	}
+
+	/** Resuelve una ruta escrita por la persona a ruta absoluta normalizada. */
+	function resolver(ruta: string): string {
+		let bruto: string
+		if (ruta === '~') bruto = CASA
+		else if (ruta.startsWith('~/')) bruto = CASA + ruta.slice(1)
+		else if (ruta.startsWith('/')) bruto = ruta
+		else bruto = actual + '/' + ruta
+
+		const pila: string[] = []
+		for (const parte of bruto.split('/')) {
+			if (parte === '' || parte === '.') continue
+			if (parte === '..') pila.pop()
+			else pila.push(parte)
+		}
+		return '/' + pila.join('/')
+	}
+
+	function buscar(absoluta: string): Nodo | null {
+		if (absoluta === '/') return RAIZ
+		let nodo: Nodo = RAIZ
+		for (const parte of absoluta.split('/').filter(Boolean)) {
+			const hijo = nodo.hijos?.find((h) => h.nombre === parte)
+			if (!hijo) return null
+			nodo = hijo
+		}
+		return nodo
+	}
+
+	const ordenar = (a: string, b: string) => a.localeCompare(b, 'es', { sensitivity: 'base' })
+
+	function permisos(nodo: Nodo): string {
+		if (nodo.tipo === 'd') return 'drwxr-xr-x'
+		return nodo.nombre.endsWith('.sh') ? '-rwxr-xr-x' : '-rw-r--r--'
+	}
+
+	function escribir(texto: string, clase = 'texto') {
+		const linea = document.createElement('div')
+		linea.className = clase
+		linea.textContent = texto
+		salida.append(linea)
+	}
+
+	function ejecutarLs(args: string[]): void {
+		const banderas = args.filter((a) => a.startsWith('-')).join('')
+		const todos = banderas.includes('a')
+		const largo = banderas.includes('l')
+		const destinos = args.filter((a) => !a.startsWith('-'))
+
+		const objetivo = destinos.length ? destinos[0] : '.'
+		const absoluta = resolver(objetivo)
+		const nodo = buscar(absoluta)
+
+		if (!nodo) {
+			escribir(`ls: no se puede acceder a '${objetivo}': No existe el archivo o el directorio`)
+			return
+		}
+
+		if (nodo.tipo === '-') {
+			escribir(largo ? filaLarga(nodo, nodo.nombre) : nodo.nombre)
+			return
+		}
+
+		let nombres = (nodo.hijos ?? []).map((h) => h.nombre)
+		if (!todos) nombres = nombres.filter((n) => !n.startsWith('.'))
+		nombres.sort(ordenar)
+
+		if (largo) {
+			const visibles = nombres.map((n) => nodo.hijos!.find((h) => h.nombre === n)!)
+			const bloques = visibles.reduce((suma, h) => suma + Math.ceil(h.tam / 1024), 0)
+			escribir(`total ${bloques}`)
+			if (todos) {
+				escribir(filaLarga(nodo, '.'))
+				escribir(filaLarga(nodo, '..'))
+			}
+			visibles.forEach((h) => escribir(filaLarga(h, h.nombre)))
+			return
+		}
+
+		const lista = todos ? ['.', '..', ...nombres] : nombres
+		escribir(lista.length ? lista.join('  ') : '')
+	}
+
+	function filaLarga(nodo: Nodo, nombre: string): string {
+		const enlaces = nodo.tipo === 'd' ? 2 : 1
+		const tam = String(nodo.tam).padStart(7)
+		return `${permisos(nodo)} ${enlaces} alex alex ${tam} ${FECHA} ${nombre}`
+	}
+
+	function ejecutarCd(args: string[]): void {
+		const destino = args.find((a) => !a.startsWith('-')) ?? (args.includes('-') ? '-' : '')
+
+		if (destino === '-') {
+			const vuelta = anterior
+			anterior = actual
+			actual = vuelta
+			escribir(actual)
+			return
+		}
+
+		if (!destino) {
+			anterior = actual
+			actual = CASA
+			return
+		}
+
+		const absoluta = resolver(destino)
+		const nodo = buscar(absoluta)
+
+		if (!nodo) {
+			escribir(`bash: cd: ${destino}: No existe el archivo o el directorio`)
+			return
+		}
+		if (nodo.tipo !== 'd') {
+			escribir(`bash: cd: ${destino}: No es un directorio`)
+			return
+		}
+
+		anterior = actual
+		actual = absoluta
+	}
+
+	const AYUDA = [
+		'Comandos de este simulador:',
+		'',
+		'  pwd            dice en qué carpeta estás',
+		'  ls             lista lo que hay a la vista',
+		'  ls -a          incluye también los archivos ocultos',
+		'  ls -l          una línea por archivo, con permisos y tamaño',
+		'  cd <carpeta>   entra en una carpeta',
+		'  cd ..          sube un nivel',
+		'  cd ~   o   cd  vuelve a tu carpeta personal',
+		'  cd -           vuelve a la carpeta donde estabas antes',
+		'  clear          limpia la pantalla',
+		'  help           enseña esta lista',
+		'',
+		'Puedes combinarlos: ls -la Documentos, cd /home/alex/Fotos, cd ../proyecto',
+	]
+
+	function ejecutar(linea: string): void {
+		const orden = linea.trim()
+
+		const eco = document.createElement('div')
+		eco.className = 'eco'
+		const marca = document.createElement('span')
+		marca.className = 'prompt'
+		marca.textContent = `alex@ubuntu:${corto(actual)}$ `
+		eco.append(marca, orden)
+		salida.append(eco)
+
+		if (!orden) return
+
+		const [comando, ...args] = orden.split(/\s+/)
+
+		switch (comando) {
+			case 'pwd':
+				escribir(actual)
+				break
+			case 'ls':
+				ejecutarLs(args)
+				break
+			case 'cd':
+				ejecutarCd(args)
+				break
+			case 'clear':
+				salida.replaceChildren()
+				break
+			case 'help':
+				AYUDA.forEach((l) => escribir(l, 'aviso'))
+				break
+			default:
+				escribir(`bash: ${comando}: orden no encontrada`)
+		}
+	}
+
+	function refrescarPrompt() {
+		promptEl.textContent = `alex@ubuntu:${corto(actual)}$`
+		etiqueta.textContent = `Escribe un comando de terminal. Carpeta actual: ${corto(actual)}`
+	}
+
+	function alFondo() {
+		cuerpo.scrollTop = cuerpo.scrollHeight
+	}
+
+	function arrancar() {
+		actual = CASA
+		anterior = CASA
+		historial.length = 0
+		indiceHistorial = 0
+		salida.replaceChildren()
+		escribir('Simulador de terminal. Aquí no se rompe nada.', 'aviso')
+		escribir('Escribe help si no sabes por dónde empezar.', 'aviso')
+		escribir('', 'aviso')
+		refrescarPrompt()
+		entrada.value = ''
+		alFondo()
+	}
+
+	entrada.addEventListener('keydown', (evento) => {
+		if (evento.key === 'Enter') {
+			evento.preventDefault()
+			const linea = entrada.value
+			if (linea.trim()) {
+				historial.push(linea)
+				indiceHistorial = historial.length
+			}
+			ejecutar(linea)
+			entrada.value = ''
+			refrescarPrompt()
+			alFondo()
+			return
+		}
+
+		if (evento.key === 'ArrowUp') {
+			if (!historial.length) return
+			evento.preventDefault()
+			indiceHistorial = Math.max(0, indiceHistorial - 1)
+			entrada.value = historial[indiceHistorial] ?? ''
+			return
+		}
+
+		if (evento.key === 'ArrowDown') {
+			if (!historial.length) return
+			evento.preventDefault()
+			indiceHistorial = Math.min(historial.length, indiceHistorial + 1)
+			entrada.value = historial[indiceHistorial] ?? ''
+		}
+	})
+
+	// Pulsar en el hueco de la terminal lleva el foco al campo, como en una de verdad.
+	cuerpo.addEventListener('click', (evento) => {
+		if ((evento.target as HTMLElement).closest('button')) return
+		if (window.getSelection()?.toString()) return
+		entrada.focus({ preventScroll: true })
+	})
+
+	// Las sugerencias rellenan el campo: la persona sigue siendo quien pulsa Enter.
+	chips.forEach((chip) =>
+		chip.addEventListener('click', () => {
+			entrada.value = chip.dataset.cmd ?? ''
+			entrada.focus({ preventScroll: true })
+		}),
+	)
+
+	reiniciar.addEventListener('click', () => {
+		arrancar()
+		entrada.focus({ preventScroll: true })
+	})
+
+	arrancar()
+</script>

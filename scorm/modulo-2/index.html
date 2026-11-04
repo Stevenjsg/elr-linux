@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="Lección del tramo 02 del curso elr. Cabecera y resultados de aprendizaje de «Te mueves: rutas y carpetas»." />
+	<title>Te mueves: rutas y carpetas | elr</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" />
+	<link rel="stylesheet" href="estilos.css" />
+	<script src="scorm.js"></script>
+</head>
+<body>
+	<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+	<div class="envoltorio">
+		<header class="marca">
+			<strong>elr</strong>
+			<span>linux desde cero</span>
+		</header>
+
+		<main id="contenido">
+			<article>
+				<p class="meta">
+					<span>Tramo 02</span>
+					<span>Lección 1 de 4</span>
+					<span>30 min aprox.</span>
+				</p>
+
+				<h1>Te mueves: rutas y carpetas</h1>
+
+				<p class="entradilla">
+					Un sistema de archivos es un mapa, y ahora mismo no sabes leerlo. En media hora sabrás
+					siempre dónde estás, qué hay a tu alrededor y cómo llegar a cualquier sitio. Con tres
+					comandos.
+				</p>
+
+				<nav class="indice" aria-labelledby="indice-titulo">
+					<h2 id="indice-titulo">En esta lección</h2>
+					<ol>
+						<li><span class="num" aria-hidden="true">01</span> Resultados de aprendizaje <span class="aqui">aquí</span></li>
+						<li class="luego"><span class="num" aria-hidden="true">02</span> ¿Dónde estoy?</li>
+						<li class="luego"><span class="num" aria-hidden="true">03</span> Todo cuelga de /</li>
+						<li class="luego"><span class="num" aria-hidden="true">04</span> Mirar antes de moverse</li>
+						<li class="luego"><span class="num" aria-hidden="true">05</span> Moverse</li>
+						<li class="luego"><span class="num" aria-hidden="true">06</span> Pruébalo tú</li>
+						<li class="luego"><span class="num" aria-hidden="true">07</span> Resumen</li>
+						<li class="luego"><span class="num" aria-hidden="true">08</span> Glosario</li>
+						<li class="luego"><span class="num" aria-hidden="true">09</span> Actividades</li>
+					</ol>
+					<p class="aviso">
+						Esta entrega contiene la cabecera y los resultados de aprendizaje. El resto de secciones
+						llegará en los siguientes paquetes.
+					</p>
+				</nav>
+
+				<section class="seccion" id="resultados">
+					<h2>Resultados de aprendizaje</h2>
+
+					<p class="parrafo">Al terminar esta lección podrás:</p>
+
+					<ul class="resultados">
+						<li><strong>Explicar</strong> qué es el árbol de directorios y qué significa la raíz <code>/</code>.</li>
+						<li><strong>Averiguar</strong> en qué carpeta estás con <code>pwd</code> e interpretar lo que te dice el prompt.</li>
+						<li><strong>Listar</strong> el contenido de una carpeta con <code>ls</code>, <code>ls -l</code> y <code>ls -a</code>.</li>
+						<li><strong>Moverte</strong> con <code>cd</code> usando rutas absolutas y relativas, incluidas <code>.</code>, <code>..</code>, <code>~</code> y <code>cd -</code>.</li>
+					</ul>
+				</section>
+
+				<div class="cierre">
+					<p>
+						Has visto de qué va la lección y qué vas a saber hacer al terminarla. Marca esta parte como
+						vista para que quede registrada tu progreso.
+					</p>
+					<button type="button" class="boton" id="completar">He terminado esta parte</button>
+					<p class="aviso" id="estado" role="status">Progreso sin registrar todavía.</p>
+				</div>
+			</article>
+		</main>
+
+		<footer>Tramo 02 del curso elr, aprende Linux sin romper nada.</footer>
+	</div>
+
+	<script>
+		(function () {
+			'use strict';
+
+			var boton = document.getElementById('completar');
+			var estado = document.getElementById('estado');
+
+			var conLMS = SCORM.iniciar();
+			estado.textContent = conLMS
+				? 'Conectado al LMS. Tu progreso se guardará al marcar esta parte.'
+				: 'Abierto fuera de un LMS: puedes leer la lección, pero el progreso no se guarda.';
+
+			boton.addEventListener('click', function () {
+				if (SCORM.completar()) {
+					estado.textContent = 'Parte completada y enviada al LMS.';
+				} else {
+					estado.textContent = 'Parte completada. No hay LMS a la escucha, así que no se ha enviado nada.';
+				}
+				boton.disabled = true;
+				boton.textContent = 'Parte completada';
+			});
+
+			// Cerrar la sesión limpiamente al salir, o el LMS la deja colgada.
+			window.addEventListener('pagehide', function () { SCORM.cerrar(); });
+		})();
+	</script>
+</body>
+</html>

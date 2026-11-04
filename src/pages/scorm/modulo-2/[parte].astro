@@ -1,0 +1,22 @@
+---
+/**
+ * Una página por parte del módulo 2, para empaquetar como SCORM.
+ *
+ * Astro las genera en dist/scorm/modulo-2/<id>/. El script scripts/empaquetar-scorm.mjs
+ * las reorganiza, reescribe las rutas de los recursos a relativas y las comprime
+ * junto con el imsmanifest.xml.
+ */
+import Scorm from '../../../layouts/Scorm.astro'
+import Partes from '../../../components/modulo-2/Partes.astro'
+import { partes } from '../../../data/modulo-2'
+
+export function getStaticPaths() {
+	return partes.map((parte) => ({ params: { parte: parte.id } }))
+}
+
+const { parte } = Astro.params
+---
+
+<Scorm parteId={parte!}>
+	<Partes ids={[parte!]} />
+</Scorm>

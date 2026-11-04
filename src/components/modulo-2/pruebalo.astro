@@ -1,0 +1,78 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+import Consola from '../Consola.astro'
+
+const enlaces = [
+	{
+		href: 'https://ubuntu.com/tutorials/command-line-for-beginners',
+		texto: 'Tutorial oficial de línea de comandos para principiantes',
+		sitio: 'ubuntu.com, en inglés',
+	},
+	{
+		href: 'https://linuxcommand.org/lc3_lts0020.php',
+		texto: 'Navegación por el sistema de archivos, capítulo de LinuxCommand',
+		sitio: 'linuxcommand.org, en inglés',
+	},
+	{
+		href: 'https://manpages.ubuntu.com/manpages/noble/es/man1/ls.1.html',
+		texto: 'Manual completo de ls traducido al español',
+		sitio: 'manpages.ubuntu.com, en español',
+	},
+	{
+		href: 'https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html',
+		texto: 'Filesystem Hierarchy Standard, la norma que decide qué va en cada carpeta',
+		sitio: 'refspecs.linuxfoundation.org, en inglés',
+	},
+]
+---
+
+<section id="pruebalo" class="seccion">
+	<h2 class="titulo-seccion">Pruébalo tú</h2>
+
+	<p class="parrafo">
+		Esto es una terminal falsa con un sistema de archivos inventado. Funciona de verdad: entiende{' '}
+		<code>pwd</code>, <code>ls</code> y <code>cd</code> con todas sus opciones, y te da los mismos
+		errores que te daría Ubuntu. No está conectada a nada, así que puedes escribir lo que quieras.
+	</p>
+
+	<h3 class="subtitulo">Cuatro cosas que probar</h3>
+	<ol class="mt-4 grid max-w-[64ch] gap-3">
+		<li class="resultado">
+			Pregunta <code>pwd</code> y compara la respuesta con lo que pone el prompt. ¿Ves que son la
+			misma carpeta?
+		</li>
+		<li class="resultado">
+			Haz <code>ls</code> y después <code>ls -a</code>. ¿Qué cuatro cosas aparecen solo en el
+			segundo?
+		</li>
+		<li class="resultado">
+			Entra en <code>Fotos</code>, mira lo que hay dentro y vuelve con <code>cd ..</code>. Luego haz
+			lo mismo con la ruta absoluta <code>cd /home/alex/Fotos</code>.
+		</li>
+		<li class="resultado">
+			Equivócate a propósito: escribe <code>cd noexiste</code> y lee el error entero. Después prueba{' '}
+			<code>cd notas.txt</code>, que falla por un motivo distinto.
+		</li>
+	</ol>
+
+	<div class="mt-8">
+		<Consola />
+	</div>
+
+	<CajaRefuerzo tipo="mas" id="mas-enlaces" tema="dónde seguir leyendo">
+		<p>Si quieres seguir por tu cuenta, estas cuatro fuentes son buenas y están al día:</p>
+		<ul>
+			{
+				enlaces.map((enlace) => (
+					<li>
+						<a href={enlace.href} target="_blank" rel="noopener noreferrer">
+							{enlace.texto}
+						</a>{' '}
+						<span class="text-tinta/80">({enlace.sitio})</span>
+						<span class="solo-lectores">. Se abre en una pestaña nueva.</span>
+					</li>
+				))
+			}
+		</ul>
+	</CajaRefuerzo>
+</section>

@@ -1,0 +1,150 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+
+const movimientos = [
+	{ orden: 'cd Fotos', efecto: 'Entra en Fotos, que está aquí mismo. Es una ruta relativa: cuenta desde donde estás.' },
+	{ orden: 'cd /home/alex/Fotos', efecto: 'Entra en la misma carpeta diciendo la dirección completa. Es una ruta absoluta y funciona estés donde estés.' },
+	{ orden: 'cd ..', efecto: 'Sube un nivel, a la carpeta que contiene a esta.' },
+	{ orden: 'cd ../proyecto', efecto: 'Sube un nivel y entra en proyecto. Las partes se encadenan con barras.' },
+	{ orden: 'cd .', efecto: 'Se queda donde está. Un punto es «esta carpeta». Sola sirve de poco; en los scripts, de mucho.' },
+	{ orden: 'cd ~', efecto: 'Vuelve a tu carpeta personal desde cualquier sitio. Lo mismo que escribir cd a secas.' },
+	{ orden: 'cd -', efecto: 'Vuelve a la carpeta donde estabas antes. Es el botón de atrás del navegador.' },
+]
+---
+
+<section id="moverse" class="seccion">
+	<h2 class="titulo-seccion">Moverse</h2>
+
+	<p class="parrafo">
+		El comando es <code>cd</code>, de <em lang="en">change directory</em>. Y aquí está la única idea
+		de verdad importante de la lección: hay <strong>dos formas de decir dónde quieres ir</strong>.
+	</p>
+
+	<p class="parrafo">
+		Una <strong>ruta absoluta</strong> empieza por <code>/</code> y da la dirección completa desde la
+		raíz. Es larga, pero funciona estés donde estés. Una <strong>ruta relativa</strong> no empieza
+		por <code>/</code> y cuenta desde la carpeta en la que ya estás. Es corta, pero depende de dónde
+		te encuentres.
+	</p>
+
+	<p class="parrafo">
+		Es la diferencia entre dar tu dirección postal completa y decir «la segunda puerta a la
+		derecha».
+	</p>
+
+	<div class="tabla-envoltorio">
+		<table class="tabla">
+			<caption class="tabla-pie">Formas de usar cd, con tu carpeta personal como punto de partida</caption>
+			<thead>
+				<tr>
+					<th scope="col">Escribes</th>
+					<th scope="col">Qué hace</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					movimientos.map((m) => (
+						<tr>
+							<th scope="row"><code>{m.orden}</code></th>
+							<td>{m.efecto}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<p class="parrafo">
+		Cuando <code>cd</code> funciona no contesta nada. Esto desconcierta al principio, porque esperas
+		una confirmación, pero es la norma de la casa: si el comando ha ido bien, se calla. Para
+		comprobarlo, mira el prompt, que ya habrá cambiado, o pregunta con <code>pwd</code>.
+	</p>
+
+	<figure class="media">
+		<figcaption class="media-pie">
+			<span class="media-tipo">Vídeo</span>
+			Moverte por las carpetas, paso a paso en una terminal de verdad (2 min 30 s aprox.)
+		</figcaption>
+
+		<video
+			controls
+			preload="metadata"
+			poster="/media/te-mueves/poster.png"
+			class="mt-3 w-full max-w-[46rem] rounded-xl border-[3px] border-tinta"
+		>
+			<source src="/media/te-mueves/screencast.mp4" type="video/mp4" />
+			<track
+				kind="captions"
+				srclang="es"
+				label="Español"
+				default
+				src="/media/te-mueves/screencast.vtt"
+			/>
+			Tu navegador no puede reproducir el vídeo aquí mismo.{' '}
+			<a href="/media/te-mueves/screencast.mp4">Descarga el vídeo en formato MP4</a>.
+		</video>
+
+		<details class="detalle">
+			<summary>Transcripción del vídeo</summary>
+			<div class="detalle-cuerpo">
+				<p>
+					Esto es una terminal recién abierta. No da miedo: solo está esperando a que le digas
+					algo. Fíjate en esta línea: alex, arroba, ubuntu, dos puntos, virgulilla, dólar. Alex es
+					mi usuario, ubuntu es el nombre del equipo y la virgulilla es la carpeta donde estoy. El
+					dólar significa que está lista. Ese símbolo no se escribe nunca.
+				</p>
+				<p>
+					Primera orden: <code>pwd</code>, Enter. Me contesta <code>/home/alex</code>. Esa es mi
+					carpeta personal, la que la virgulilla abreviaba.
+				</p>
+				<p>
+					Ahora <code>ls</code>, para ver qué hay aquí dentro. Documentos, Fotos, proyecto y un
+					archivo de notas. Lo mismo que vería en el explorador de archivos.
+				</p>
+				<p>
+					Voy a entrar en Documentos: <code>cd</code>, espacio, Documentos. No ha dicho nada. En
+					Linux el silencio es buena señal: significa que ha funcionado. Lo compruebo en el prompt,
+					que ahora pone virgulilla barra Documentos, y con <code>pwd</code> lo confirmo.
+				</p>
+				<p>
+					Para subir un nivel: <code>cd</code>, espacio, punto, punto. Dos puntos seguidos siempre
+					significan la carpeta de arriba. Ya estoy otra vez en mi carpeta personal.
+				</p>
+				<p>
+					Hasta ahora he usado rutas relativas: cuentan desde donde estoy. También puedo dar la
+					dirección completa: <code>cd /home/alex/Fotos</code>. Eso es una ruta absoluta. Empieza
+					por barra y funciona desde cualquier sitio.
+				</p>
+				<p>
+					Para volver a casa desde donde sea: <code>cd ~</code>, o <code>cd</code> a secas. Y un
+					truco que gusta mucho: <code>cd -</code>, que me devuelve a la carpeta anterior. Es como
+					el botón de atrás del navegador: si lo repites, vas y vuelves entre dos carpetas.
+				</p>
+				<p>
+					Con <code>pwd</code>, <code>ls</code> y <code>cd</code> ya te mueves por todo el sistema.
+					Pruébalo en el simulador de la lección.
+				</p>
+			</div>
+		</details>
+	</figure>
+
+	<CajaRefuerzo tipo="sabias" id="sabias-tab" tema="la tecla Tab y el autocompletado">
+		<p>
+			La tecla <kbd>Tab</kbd> autocompleta. En una terminal de verdad escribes <code>cd Doc</code>,
+			pulsas <kbd>Tab</kbd> y ella termina la palabra por ti. Si hay varias opciones, púlsala dos
+			veces y te las enseña. Vas a escribir menos y a equivocarte mucho menos.
+		</p>
+		<p>
+			El simulador de esta página no hace autocompletado, así que ahí tendrás que escribir los
+			nombres enteros.
+		</p>
+	</CajaRefuerzo>
+
+	<CajaRefuerzo tipo="recuerda" id="recuerda-atajos" tema="los atajos de cd">
+		<ul>
+			<li><code>cd</code> a secas, sin nada detrás, te lleva siempre a tu carpeta personal.</li>
+			<li><code>..</code> es la carpeta de arriba. Se puede encadenar: <code>cd ../..</code> sube dos niveles.</li>
+			<li>Si te pierdes del todo, <code>cd</code> y vuelves a empezar.</li>
+		</ul>
+	</CajaRefuerzo>
+</section>

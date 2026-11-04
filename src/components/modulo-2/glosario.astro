@@ -1,0 +1,26 @@
+---
+const glosario = [
+	{ t: 'Terminal', d: 'La ventana donde escribes órdenes en lugar de hacer clic. También la llamarás consola o línea de comandos.' },
+	{ t: 'Prompt', d: 'El texto que la terminal escribe sola al principio de cada línea para avisarte de que está lista. En Ubuntu tiene la forma usuario@equipo:carpeta$.' },
+	{ t: 'Directorio', d: 'Lo mismo que una carpeta. En Linux se usan las dos palabras indistintamente.' },
+	{ t: 'Raíz', d: 'La carpeta de la que cuelga absolutamente todo el sistema. Se escribe con una sola barra: /. No la confundas con la carpeta del usuario root.' },
+	{ t: 'Carpeta personal (home)', d: 'Tu carpeta dentro de /home, donde viven tus cosas. La de Alex es /home/alex. Se abrevia con la virgulilla ~.' },
+	{ t: 'Ruta absoluta', d: 'La dirección completa de algo, empezando por la raíz. Siempre empieza por /. Por ejemplo /home/alex/Fotos.' },
+	{ t: 'Ruta relativa', d: 'La dirección contada desde la carpeta en la que estás ahora. No empieza por /. Por ejemplo Fotos o ../proyecto.' },
+	{ t: 'Archivo oculto', d: 'Cualquier archivo o carpeta cuyo nombre empieza por un punto, como .bashrc. ls no lo enseña a menos que le pidas ls -a.' },
+]
+---
+
+<section id="glosario" class="seccion">
+	<h2 class="titulo-seccion">Glosario</h2>
+	<dl class="mt-6 grid max-w-[70ch] gap-5">
+		{
+			glosario.map((item) => (
+				<div class="definicion">
+					<dt>{item.t}</dt>
+					<dd>{item.d}</dd>
+				</div>
+			))
+		}
+	</dl>
+</section>

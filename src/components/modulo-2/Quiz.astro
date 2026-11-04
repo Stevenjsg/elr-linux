@@ -1,0 +1,139 @@
+---
+/**
+ * Cuestionario autocorregible.
+ *
+ * Funciona igual en la web y dentro de un paquete SCORM: al corregir lanza un
+ * evento `quiz:corregido` con los aciertos, y quien escuche decide qué hacer
+ * con ellos (en SCORM, informar de la puntuación al LMS).
+ */
+export interface Pregunta {
+	enunciado: string
+	opciones: string[]
+	/** Índice de la opción correcta dentro de `opciones`. */
+	correcta: number
+	/** Por qué es esa. Se enseña al corregir, acierte o falle. */
+	porque: string
+}
+
+interface Props {
+	id: string
+	titulo: string
+	preguntas: Pregunta[]
+}
+
+const { id, titulo, preguntas } = Astro.props
+---
+
+<section class="quiz" data-quiz={id} aria-labelledby={`${id}-titulo`}>
+	<h3 id={`${id}-titulo`} class="quiz-titulo">{titulo}</h3>
+
+	<form data-quiz-form>
+		{
+			preguntas.map((pregunta, i) => (
+				<fieldset class="quiz-pregunta" data-correcta={pregunta.correcta}>
+					<legend>
+						<span class="quiz-numero" aria-hidden="true">{i + 1}</span>
+						{pregunta.enunciado}
+					</legend>
+
+					<div class="quiz-opciones">
+						{pregunta.opciones.map((opcion, j) => (
+							<label class="quiz-opcion">
+								<input type="radio" name={`${id}-p${i}`} value={j} required />
+								<span set:html={opcion} />
+							</label>
+						))}
+					</div>
+
+					<p class="quiz-explicacion" data-explicacion hidden>
+						<span data-veredicto></span> <span set:html={pregunta.porque} />
+					</p>
+				</fieldset>
+			))
+		}
+
+		<div class="quiz-acciones">
+			<button type="submit" class="quiz-boton">Corregir</button>
+			<button type="button" class="quiz-boton quiz-boton--suave" data-reintentar hidden>
+				Volver a intentarlo
+			</button>
+		</div>
+
+		<p class="quiz-marcador" data-marcador role="status"></p>
+	</form>
+</section>
+
+<script>
+	type Resultado = { id: string; aciertos: number; total: number }
+
+	document.querySelectorAll<HTMLElement>('[data-quiz]').forEach((quiz) => {
+		const formulario = quiz.querySelector<HTMLFormElement>('[data-quiz-form]')!
+		const preguntas = Array.from(quiz.querySelectorAll<HTMLFieldSetElement>('.quiz-pregunta'))
+		const marcador = quiz.querySelector<HTMLElement>('[data-marcador]')!
+		const reintentar = quiz.querySelector<HTMLButtonElement>('[data-reintentar]')!
+		const corregir = quiz.querySelector<HTMLButtonElement>('.quiz-boton')!
+
+		formulario.addEventListener('submit', (evento) => {
+			evento.preventDefault()
+
+			let aciertos = 0
+
+			preguntas.forEach((pregunta) => {
+				const correcta = Number(pregunta.dataset.correcta)
+				const elegida = pregunta.querySelector<HTMLInputElement>('input:checked')
+				const acertada = elegida !== null && Number(elegida.value) === correcta
+
+				if (acertada) aciertos++
+
+				pregunta.classList.toggle('es-acierto', acertada)
+				pregunta.classList.toggle('es-fallo', !acertada)
+
+				// El acierto no se señala solo con color: también se dice con palabras.
+				const explicacion = pregunta.querySelector<HTMLElement>('[data-explicacion]')!
+				const veredicto = explicacion.querySelector<HTMLElement>('[data-veredicto]')!
+				veredicto.textContent = acertada ? 'Correcto.' : 'No es esa.'
+				veredicto.className = acertada ? 'quiz-veredicto es-bien' : 'quiz-veredicto es-mal'
+				explicacion.hidden = false
+
+				// Marcar cuál era la buena y bloquear el cambio de respuesta.
+				pregunta.querySelectorAll<HTMLInputElement>('input').forEach((radio) => {
+					radio.disabled = true
+					if (Number(radio.value) === correcta) {
+						radio.closest('.quiz-opcion')!.classList.add('es-correcta')
+					}
+				})
+			})
+
+			const total = preguntas.length
+			marcador.textContent = `${aciertos} de ${total} ${aciertos === 1 ? 'acierto' : 'aciertos'}.${
+				aciertos === total ? ' Perfecto.' : ' Repasa las explicaciones y vuelve a intentarlo.'
+			}`
+
+			corregir.hidden = true
+			reintentar.hidden = false
+
+			quiz.dispatchEvent(
+				new CustomEvent<Resultado>('quiz:corregido', {
+					bubbles: true,
+					detail: { id: quiz.dataset.quiz!, aciertos, total },
+				}),
+			)
+		})
+
+		reintentar.addEventListener('click', () => {
+			formulario.reset()
+			preguntas.forEach((pregunta) => {
+				pregunta.classList.remove('es-acierto', 'es-fallo')
+				pregunta.querySelector<HTMLElement>('[data-explicacion]')!.hidden = true
+				pregunta.querySelectorAll<HTMLInputElement>('input').forEach((radio) => {
+					radio.disabled = false
+					radio.closest('.quiz-opcion')!.classList.remove('es-correcta')
+				})
+			})
+			marcador.textContent = ''
+			corregir.hidden = false
+			reintentar.hidden = true
+			quiz.querySelector<HTMLInputElement>('input')?.focus()
+		})
+	})
+</script>

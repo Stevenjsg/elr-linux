@@ -1,6 +1,8 @@
 # build output
 dist/
 elr-web.zip
+scorm/elr-modulo-2-scorm.zip
+scorm/modulo-2-paquete/
 # generated types
 .astro/
 

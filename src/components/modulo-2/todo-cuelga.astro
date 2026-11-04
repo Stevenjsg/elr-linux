@@ -1,0 +1,81 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+import ArbolSVG from '../ArbolSVG.astro'
+---
+
+<section id="todo-cuelga" class="seccion">
+	<h2 class="titulo-seccion">Todo cuelga de /</h2>
+
+	<p class="parrafo">
+		Si vienes de Windows, tienes metido en la cabeza que el disco se llama <code>C:</code>, que el
+		pendrive es <code>E:</code> y que son sitios separados. En Linux eso no existe.
+	</p>
+
+	<p class="parrafo">
+		Aquí hay <strong>un solo árbol</strong>. Arriba del todo está la raíz, que se escribe con una
+		barra sola: <code>/</code>. De ella cuelga todo lo demás, y cuando conectas un disco nuevo no
+		aparece una letra: aparece una carpeta más dentro del mismo árbol.
+	</p>
+
+	<ArbolSVG />
+
+	<p class="parrafo">
+		De todas esas carpetas, la que te importa hoy es <code>/home/alex</code>: la tuya. Ahí están tus
+		documentos, tus fotos y tus descargas, y es donde la terminal te deja al abrirse.
+	</p>
+
+	<figure class="media">
+		<figcaption class="media-pie">
+			<span class="media-tipo">Audio</span>
+			Por qué en Linux todo cuelga de una sola raíz (1 min 30 s aprox.)
+		</figcaption>
+
+		<audio controls preload="none" class="mt-3 w-full max-w-[42rem]">
+			<source src="/media/te-mueves/audio-raiz.mp3" type="audio/mpeg" />
+			Tu navegador no puede reproducir el audio aquí mismo.{' '}
+			<a href="/media/te-mueves/audio-raiz.mp3">Descarga el audio en formato MP3</a>.
+		</audio>
+
+		<details class="detalle">
+			<summary>Transcripción del audio</summary>
+			<div class="detalle-cuerpo">
+				<p>
+					Si vienes de Windows, llevas años pensando en letras. El disco duro es C, el pendrive es
+					E, el disco externo es F. Cada uno es un mundo aparte, con su propia raíz, y para pasar
+					de uno a otro cambias de unidad.
+				</p>
+				<p>
+					En Linux eso no existe. No hay letras. Hay un único árbol, y arriba del todo hay una
+					barra sola: la raíz. De esa barra cuelga absolutamente todo lo que tiene el ordenador.
+				</p>
+				<p>
+					Dentro de la raíz hay carpetas con nombres cortos que al principio parecen crípticos.
+					Barra bin guarda los programas básicos, los que usas constantemente, como el propio ls.
+					Barra etc guarda la configuración del sistema, en archivos de texto que puedes abrir y
+					leer. Barra home es donde vive la gente: dentro hay una carpeta por cada persona que usa
+					el ordenador, y la tuya lleva tu nombre.
+				</p>
+				<p>
+					¿Y el pendrive? Cuando lo enchufas no aparece ninguna letra nueva. Aparece una carpeta,
+					normalmente dentro de barra media, y a partir de ese momento se recorre igual que
+					cualquier otra. Esto se llama montar un disco, y es una de las cosas que más desconcierta
+					al principio y que más cómoda resulta después.
+				</p>
+				<p>
+					La idea que te tienes que llevar es esta: en Linux no cambias de unidad, solo te mueves
+					por un árbol. Y como solo hay un árbol, cualquier cosa del ordenador tiene una única
+					dirección que empieza por barra. Eso es una ruta absoluta, y la vas a usar
+					constantemente.
+				</p>
+			</div>
+		</details>
+	</figure>
+
+	<CajaRefuerzo tipo="sabias" id="sabias-unidades" tema="las unidades y los pendrives">
+		<p>
+			Un pendrive en Linux no es <code>E:</code>. Al enchufarlo aparece como una carpeta, casi
+			siempre dentro de <code>/media</code>, y se recorre con <code>cd</code> igual que cualquier
+			otra. A eso se le llama <strong>montar</strong> un disco.
+		</p>
+	</CajaRefuerzo>
+</section>

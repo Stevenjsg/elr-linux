@@ -1,0 +1,54 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+---
+
+<section id="donde-estoy" class="seccion">
+	<h2 class="titulo-seccion">¿Dónde estoy?</h2>
+
+	<p class="parrafo">
+		Abres la terminal y lo primero que ves es una línea de texto que no has escrito tú. Se llama{' '}
+		<strong>prompt</strong>, y no es decoración: te está diciendo tres cosas.
+	</p>
+
+	<pre class="bloque"><code>alex@ubuntu:~$</code></pre>
+
+	<dl class="mt-6 grid max-w-[64ch] gap-4">
+		<div class="definicion">
+			<dt><code>alex</code></dt>
+			<dd>Tu nombre de usuario. Quién eres para el sistema.</dd>
+		</div>
+		<div class="definicion">
+			<dt><code>ubuntu</code></dt>
+			<dd>El nombre del equipo. Importa cuando te conectas a varios ordenadores a la vez.</dd>
+		</div>
+		<div class="definicion">
+			<dt><code>~</code></dt>
+			<dd>La carpeta en la que estás ahora mismo. Esa virgulilla significa «mi carpeta personal».</dd>
+		</div>
+		<div class="definicion">
+			<dt><code>$</code></dt>
+			<dd>Está lista y esperando. Puedes escribir.</dd>
+		</div>
+	</dl>
+
+	<p class="parrafo">
+		El prompt te da la carpeta abreviada. Cuando quieras la dirección completa, pregúntasela con{' '}
+		<code>pwd</code>, de <em lang="en">print working directory</em>:
+	</p>
+
+	<pre class="bloque"><code>alex@ubuntu:~$ pwd
+/home/alex</code></pre>
+
+	<p class="parrafo">
+		Ya tienes la primera respuesta: <code>~</code> y <code>/home/alex</code> son la misma carpeta
+		escrita de dos maneras.
+	</p>
+
+	<CajaRefuerzo tipo="recuerda" id="recuerda-dolar" tema="el símbolo del dólar en el prompt">
+		<p>
+			El <code>$</code> no se escribe nunca. Forma parte del prompt, no del comando. Cuando copies
+			una orden de internet y veas <code>$ sudo apt update</code>, copia solo lo que va después del
+			dólar.
+		</p>
+	</CajaRefuerzo>
+</section>

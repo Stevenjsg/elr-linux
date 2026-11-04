@@ -1,0 +1,17 @@
+---
+const resumen = [
+	'Todo cuelga de la raíz /. No hay letras de unidad: los discos y los pendrives aparecen como carpetas dentro del mismo árbol.',
+	'El prompt ya te dice dónde estás. Si quieres la dirección completa, pregunta con pwd.',
+	'ls enseña lo que hay. Con -a aparecen los ocultos y con -l ves permisos, tamaño y, sobre todo, la d que distingue las carpetas.',
+	'Una ruta absoluta empieza por / y vale desde cualquier sitio. Una relativa cuenta desde donde estás.',
+	'.. es subir un nivel, ~ es tu carpeta personal y cd - te devuelve a la anterior.',
+	'Si cd no dice nada, ha funcionado. En Linux el silencio es buena señal.',
+]
+---
+
+<section id="resumen" class="seccion">
+	<h2 class="titulo-seccion">Resumen</h2>
+	<ul class="mt-5 grid max-w-[66ch] gap-3">
+		{resumen.map((punto) => <li class="resultado">{punto}</li>)}
+	</ul>
+</section>

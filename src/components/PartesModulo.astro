@@ -1,0 +1,30 @@
+---
+/**
+ * Elige el registro de partes de cada módulo.
+ *
+ * src/data/modulos.ts no puede importar componentes (lo leen también los scripts
+ * de Node), así que la relación «módulo → componentes» vive aquí. Al añadir un
+ * módulo, importa su Partes.astro y añádelo a REGISTRO.
+ */
+import PartesModulo2 from './modulo-2/Partes.astro'
+
+const REGISTRO: Record<string, any> = {
+	'modulo-2': PartesModulo2,
+}
+
+interface Props {
+	/** Slug del módulo, como en src/data/modulos.ts. */
+	modulo: string
+	/** Ids de las partes a pintar. Si no se indica, se pintan todas. */
+	ids?: string[]
+}
+
+const { modulo, ids } = Astro.props
+const Partes = REGISTRO[modulo]
+
+if (!Partes) {
+	throw new Error(`PartesModulo: «${modulo}» no está registrado en src/components/PartesModulo.astro`)
+}
+---
+
+<Partes ids={ids} />

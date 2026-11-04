@@ -1,0 +1,163 @@
+---
+/**
+ * Envoltorio de una parte suelta dentro de un paquete para plataformas
+ * (SCORM 1.2 o cmi5).
+ *
+ * Deliberadamente NO lleva la navegación del sitio: dentro de una plataforma cada
+ * parte es un SCO / una AU independiente y es la plataforma quien navega entre ellas.
+ *
+ * El envoltorio de la plataforma va en línea para que el paquete no dependa de
+ * rutas. Los dos (src/plataforma/*.js) exponen window.PLATAFORMA con la misma
+ * forma, así que este layout y los cuestionarios no distinguen entre ellos.
+ */
+import type { Modulo } from '../data/modulos'
+import scorm12 from '../plataforma/scorm12.js?raw'
+import cmi5 from '../plataforma/cmi5.js?raw'
+import '../styles/global.css'
+import '../styles/leccion.css'
+
+export type Plataforma = 'scorm' | 'cmi5'
+
+interface Props {
+	modulo: Modulo
+	parteId: string
+	plataforma: Plataforma
+}
+
+const { modulo, parteId, plataforma } = Astro.props
+const { leccion, partes } = modulo
+const parte = partes.find((p) => p.id === parteId)!
+const posicion = partes.findIndex((p) => p.id === parteId) + 1
+// Una parte con cuestionario informa ella misma de su nota: el botón genérico sobra.
+const botonGenerico = !parte.completaSola
+const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
+---
+
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={`${parte.titulo} — ${leccion.titulo}. ${leccion.descripcion}`} />
+		<title>{parte.titulo} — {leccion.titulo}</title>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap"
+		/>
+
+		<script is:inline set:html={envoltorio} />
+	</head>
+
+	<body>
+		<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+		<div class="mx-auto max-w-[1180px] px-4 pb-16 sm:px-8">
+			<header class="flex flex-wrap items-baseline gap-x-3 gap-y-1 pt-6 pb-1">
+				<span class="font-mono text-xl font-semibold tracking-tight text-uva">elr</span>
+				<span class="font-mono text-[0.72rem] text-tinta/70">linux desde cero</span>
+			</header>
+
+			<main id="contenido">
+				{/* El h1 de la página es la lección: la parte es una sección (h2) dentro de ella,
+				    así la jerarquía no da saltos aunque cada parte sea una página suelta. */}
+				<h1 class="mt-5 text-[1.3rem] font-extrabold tracking-[-0.02em]">{leccion.titulo}</h1>
+
+				<p class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 font-mono text-[0.76rem] font-semibold text-uva">
+					<span>{leccion.tramo}</span>
+					<span class="text-tinta/70">Parte {posicion} de {partes.length}</span>
+					{parte.minutos > 0 && <span class="text-tinta/70">{parte.minutos} min aprox.</span>}
+				</p>
+
+				<slot />
+
+				<div class="cierre-scorm">
+					{
+						botonGenerico && (
+							<>
+								<p>
+									Cuando hayas leído esta parte, márcala para que el progreso quede registrado en la
+									plataforma.
+								</p>
+								<button type="button" class="boton-scorm" id="completar" disabled>
+									He terminado esta parte
+								</button>
+							</>
+						)
+					}
+					<p class="estado-scorm" id="estado" role="status">Conectando con la plataforma…</p>
+					{/* Solo cmi5: la plataforma puede indicar adónde volver al salir. */}
+					<button type="button" class="boton-salir" id="salir" hidden>Volver a la plataforma</button>
+				</div>
+			</main>
+
+			<footer class="mt-12 border-t-[3px] border-tinta pt-6 font-mono text-[0.74rem] text-tinta/70">
+				{leccion.pie}
+			</footer>
+		</div>
+
+		<script is:inline>
+			;(function () {
+				var P = window.PLATAFORMA
+				var boton = document.getElementById('completar')
+				var estado = document.getElementById('estado')
+				var salir = document.getElementById('salir')
+
+				var MENSAJES = {
+					conectado: boton
+						? 'Conectado a la plataforma. Tu progreso se guardará al marcar esta parte.'
+						: 'Conectado a la plataforma. Tu puntuación se guardará al corregir.',
+					revision: 'Abierto en modo repaso: puedes leer la parte, pero no se registra progreso.',
+					'sin-plataforma': 'Abierto fuera de una plataforma: puedes leer la parte, pero el progreso no se guarda.',
+					'sesion-cerrada':
+						'Esta sesión ya se cerró. Vuelve a abrir la parte desde la plataforma para seguir registrando tu progreso.',
+					error: 'No se ha podido conectar con la plataforma: puedes leer la parte, pero el progreso no se guarda.',
+				}
+
+				window.addEventListener('pagehide', function () {
+					P.cerrar()
+				})
+
+				function marcarHecha(enviado) {
+					boton.disabled = true
+					boton.textContent = 'Parte completada'
+					estado.textContent = enviado
+						? 'Parte completada y enviada a la plataforma.'
+						: 'Parte completada. No hay plataforma a la escucha, así que no se ha enviado nada.'
+				}
+
+				P.iniciar().then(function (conectado) {
+					if (P.urlRetorno()) {
+						salir.hidden = false
+						salir.addEventListener('click', function () {
+							salir.disabled = true
+							P.salir()
+						})
+					}
+
+					if (boton && conectado && P.yaCompletada()) {
+						marcarHecha(true)
+						return
+					}
+					estado.textContent = MENSAJES[P.estado()] || MENSAJES.error
+
+					// Las partes con cuestionario no tienen botón: se puntúan solas.
+					// En modo repaso no se registra nada, así que el botón sigue apagado.
+					if (!boton || P.estado() === 'revision') return
+					boton.disabled = false
+					boton.addEventListener('click', function () {
+						boton.disabled = true
+						P.completar().then(function (enviado) {
+							if (enviado || !conectado) return marcarHecha(enviado)
+							// Conectados pero no llegó: se puede reintentar.
+							boton.disabled = false
+							estado.textContent = 'No se ha podido enviar a la plataforma. Prueba otra vez.'
+						})
+					})
+				})
+			})()
+		</script>
+	</body>
+</html>

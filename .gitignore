@@ -1,8 +1,8 @@
 # build output
 dist/
 elr-web.zip
-scorm/elr-modulo-2-scorm.zip
-scorm/modulo-2-paquete/
+scorm/elr-*-scorm.zip
+scorm/*-paquete/
 # generated types
 .astro/
 
@@ -25,3 +25,4 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+/cmi5/

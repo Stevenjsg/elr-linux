@@ -1,0 +1,25 @@
+---
+/**
+ * Una página por parte de cada módulo, para empaquetar como cmi5 (xAPI).
+ *
+ * Astro las genera en dist/cmi5/<modulo>/<parte>/. El script
+ * scripts/empaquetar-cmi5.mjs las reorganiza, reescribe las rutas de los
+ * recursos a relativas y las comprime junto con el cmi5.xml.
+ */
+import ParteSuelta from '../../../layouts/ParteSuelta.astro'
+import PartesModulo from '../../../components/PartesModulo.astro'
+import { modulos } from '../../../data/modulos'
+
+export function getStaticPaths() {
+	return modulos.flatMap((modulo) =>
+		modulo.partes.map((parte) => ({ params: { modulo: modulo.slug, parte: parte.id }, props: { modulo } })),
+	)
+}
+
+const { modulo } = Astro.props
+const { parte } = Astro.params
+---
+
+<ParteSuelta modulo={modulo} parteId={parte!} plataforma="cmi5">
+	<PartesModulo modulo={modulo.slug} ids={[parte!]} />
+</ParteSuelta>

@@ -2,31 +2,16 @@
  * Contenido modular del módulo 2.
  *
  * Esta es la única fuente de verdad sobre QUÉ partes tiene la lección y en qué
- * orden. La web las pinta todas seguidas; el paquete SCORM genera una página
- * (un SCO) por cada una, de modo que el LMS pueda seguir el progreso parte a
- * parte en lugar de tratar la lección entera como un único bloque.
+ * orden. La web las pinta todas seguidas; los paquetes SCORM y cmi5 generan una
+ * página (un SCO / una AU) por cada una, de modo que la plataforma pueda seguir
+ * el progreso parte a parte en lugar de tratar la lección entera como un bloque.
  *
  * El contenido de cada parte vive en src/components/modulo-2/<id>.astro.
  */
 
-export type Medio = 'grafico' | 'audio' | 'video' | 'simulador' | 'cuestionario'
+import type { Leccion, Parte } from './tipos.ts'
 
-export interface Parte {
-	/** Identificador estable: también es el segmento de URL y el ID del SCO. */
-	id: string
-	/** Número que se muestra en el índice. */
-	numero: string
-	/** Título visible y entrada del índice. */
-	titulo: string
-	/** Minutos estimados, para el índice y para los metadatos del SCO. */
-	minutos: number
-	/** Qué recursos no textuales aparecen en esta parte. */
-	medios?: Medio[]
-	/** La parte informa ella misma de su estado al LMS (cuestionarios). */
-	completaSola?: boolean
-	/** Nota mínima sobre 100 para dar la parte por superada. */
-	notaMinima?: number
-}
+export type { Medio, Parte } from './tipos.ts'
 
 export const leccion = {
 	modulo: 2,
@@ -39,7 +24,7 @@ export const leccion = {
 	entradilla:
 		'Un sistema de archivos es un mapa, y ahora mismo no sabes leerlo. En media hora sabrás siempre dónde estás, qué hay a tu alrededor y cómo llegar a cualquier sitio. Con tres comandos.',
 	pie: 'Tramo 02 del curso elr, aprende Linux sin romper nada.',
-} as const
+} as const satisfies Leccion
 
 export const partes: Parte[] = [
 	{ id: 'resultados', numero: '01', titulo: 'Resultados de aprendizaje', minutos: 2 },

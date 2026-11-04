@@ -76,8 +76,9 @@ const quizDos: Pregunta[] = [
 
 <script>
 	/**
-	 * Junta el resultado de los dos cuestionarios. Dentro de un paquete SCORM
-	 * informa de la puntuación al LMS; en la web se queda en un resumen en pantalla.
+	 * Junta el resultado de los dos cuestionarios. Dentro de un paquete (SCORM o
+	 * cmi5) informa de la puntuación a la plataforma; en la web se queda en un
+	 * resumen en pantalla.
 	 */
 	const resultados = new Map<string, { aciertos: number; total: number }>()
 	const resumen = document.querySelector<HTMLElement>('[data-total-actividades]')
@@ -98,13 +99,16 @@ const quizDos: Pregunta[] = [
 		const porcentaje = Math.round((aciertosTotales / preguntasTotales) * 100)
 		const aprobado = porcentaje >= 70
 
-		const scorm = (window as any).SCORM
-		const enviado = scorm?.puntuar?.(porcentaje, aprobado)
-
-		resumen.hidden = false
-		resumen.textContent =
+		const texto =
 			`Los dos cuestionarios: ${aciertosTotales} de ${preguntasTotales} (${porcentaje} %). ` +
-			(aprobado ? 'Lo tienes.' : 'Repasa las explicaciones y repite.') +
-			(enviado ? ' Puntuación enviada a la plataforma.' : '')
+			(aprobado ? 'Lo tienes.' : 'Repasa las explicaciones y repite.')
+		resumen.hidden = false
+		resumen.textContent = texto
+
+		// Solo existe en las páginas de los paquetes (SCORM o cmi5); en la web no hay nada.
+		const plataforma = (window as any).PLATAFORMA
+		plataforma?.puntuar?.(porcentaje, aprobado).then((enviado: boolean) => {
+			if (enviado) resumen.textContent = `${texto} Puntuación enviada a la plataforma.`
+		})
 	})
 </script>

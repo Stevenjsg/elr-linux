@@ -1,0 +1,122 @@
+---
+/**
+ * Calculadora de permisos: casillas r/w/x por dueño, grupo y otros, sincronizadas
+ * con la cifra (754), la cadena (rwxr-xr--) y la orden chmod equivalente.
+ * Se puede empezar por las casillas o escribiendo las tres cifras.
+ */
+const quienes = [
+	{ id: 'u', nombre: 'Dueño' },
+	{ id: 'g', nombre: 'Grupo' },
+	{ id: 'o', nombre: 'Otros' },
+]
+const permisos = [
+	{ id: 'r', nombre: 'leer', valor: 4 },
+	{ id: 'w', nombre: 'escribir', valor: 2 },
+	{ id: 'x', nombre: 'ejecutar', valor: 1 },
+]
+const inicial = { u: 'rwx', g: 'rx', o: 'r' } as Record<string, string>
+---
+
+<div class="calculadora rounded-xl border-[3px] border-tinta bg-white p-5 sm:p-6" data-calculadora>
+	<div class="overflow-x-auto">
+		<table class="w-full max-w-[32rem] border-collapse text-center">
+			<caption class="solo-lectores">Marca qué puede hacer cada grupo de gente</caption>
+			<thead>
+				<tr class="border-b-[3px] border-tinta">
+					<th scope="col" class="py-2 text-left">Quién</th>
+					{permisos.map((p) => <th scope="col" class="py-2 font-mono">{p.id} <span class="font-sans text-[0.8rem] font-normal text-tinta/75">({p.nombre}, {p.valor})</span></th>)}
+				</tr>
+			</thead>
+			<tbody>
+				{
+					quienes.map((q) => (
+						<tr class="border-b border-tinta/20">
+							<th scope="row" class="py-3 text-left">{q.nombre} <span class="font-mono text-uva">({q.id})</span></th>
+							{permisos.map((p) => (
+								<td class="py-3">
+									<input
+										type="checkbox"
+										class="h-5 w-5 accent-[#5B2EE5]"
+										data-quien={q.id}
+										data-permiso={p.id}
+										data-valor={p.valor}
+										checked={inicial[q.id].includes(p.id)}
+										aria-label={`${q.nombre}: ${p.nombre}`}
+									/>
+								</td>
+							))}
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="mt-6 grid gap-4 sm:grid-cols-3">
+		<label class="block">
+			<span class="font-semibold">En números</span>
+			<input
+				type="text"
+				inputmode="numeric"
+				maxlength="3"
+				pattern="[0-7]{3}"
+				class="mt-1 w-full rounded-lg border-2 border-tinta px-3 py-2 font-mono text-[1.3rem] text-uva"
+				data-numero
+				aria-describedby="calc-ayuda"
+			/>
+		</label>
+		<div>
+			<span class="font-semibold">En letras</span>
+			<p class="mt-1 rounded-lg border-2 border-tinta/30 px-3 py-2 font-mono text-[1.3rem]" data-cadena aria-live="polite"></p>
+		</div>
+		<div>
+			<span class="font-semibold">La orden</span>
+			<p class="mt-1 rounded-lg border-2 border-tinta/30 px-3 py-2 font-mono text-[1.05rem] leading-[1.9]" data-orden></p>
+		</div>
+	</div>
+	<p id="calc-ayuda" class="mt-3 text-[0.9rem] text-tinta/75" data-ayuda>
+		Marca casillas o escribe tres cifras del 0 al 7.
+	</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-calculadora]').forEach((calc) => {
+		const casillas = Array.from(calc.querySelectorAll<HTMLInputElement>('input[type=checkbox]'))
+		const numero = calc.querySelector<HTMLInputElement>('[data-numero]')!
+		const cadena = calc.querySelector<HTMLElement>('[data-cadena]')!
+		const orden = calc.querySelector<HTMLElement>('[data-orden]')!
+		const ayuda = calc.querySelector<HTMLElement>('[data-ayuda]')!
+		const QUIENES = ['u', 'g', 'o']
+
+		const de = (q: string) => casillas.filter((c) => c.dataset.quien === q)
+
+		function pintar(desdeNumero = false) {
+			const cifras = QUIENES.map((q) => de(q).reduce((n, c) => n + (c.checked ? Number(c.dataset.valor) : 0), 0))
+			const letras = QUIENES.map((q) => de(q).map((c) => (c.checked ? c.dataset.permiso : '-')).join('')).join('')
+			if (!desdeNumero) numero.value = cifras.join('')
+			cadena.textContent = '-' + letras
+			orden.textContent = `chmod ${cifras.join('')} archivo`
+			const n = cifras.join('')
+			ayuda.textContent =
+				n === '777'
+					? 'Cuidado: 777 deja a cualquiera cambiar o borrar el archivo.'
+					: cifras[2] >= 2
+						? 'Ojo: los otros pueden escribir. Casi nunca es lo que quieres.'
+						: 'Marca casillas o escribe tres cifras del 0 al 7.'
+		}
+
+		casillas.forEach((c) => c.addEventListener('change', () => pintar()))
+		numero.addEventListener('input', () => {
+			if (!/^[0-7]{3}$/.test(numero.value)) {
+				ayuda.textContent = 'Tienen que ser tres cifras, cada una del 0 al 7.'
+				return
+			}
+			QUIENES.forEach((q, i) => {
+				const v = Number(numero.value[i])
+				de(q).forEach((c) => (c.checked = (v & Number(c.dataset.valor)) !== 0))
+			})
+			pintar(true)
+		})
+		pintar()
+	})
+</script>

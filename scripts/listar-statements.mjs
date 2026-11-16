@@ -3,7 +3,8 @@
  * listos para pegar en la caja de texto de la tarea.
  *
  *   pnpm statements rise           # curso de Rise (Articulate)
- *   pnpm statements tutorial       # tutorial web con xAPI Launch (módulo 2)
+ *   pnpm statements tutorial       # tutorial web xAPI del módulo 2
+ *   pnpm statements tutorial3      # tutorial web xAPI del módulo 3
  *   pnpm statements <IRI> [n]      # cualquier actividad; n = cuántos (20 por defecto)
  *
  * Credenciales en .env (ya está en .gitignore). En lrs.io: tu LRS → Access Keys →
@@ -16,6 +17,7 @@
 const ACTIVIDADES = {
 	rise: 'https://sjsilgom.upv.edu.es/xapi/elr/rise/permisos-linux',
 	tutorial: 'https://sjsilgom.upv.edu.es/xapi/elr/xapi/modulo-2',
+	tutorial3: 'https://sjsilgom.upv.edu.es/xapi/elr/xapi/modulo-3',
 }
 
 const { LRS_ENDPOINT, LRS_KEY, LRS_SECRET } = process.env

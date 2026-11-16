@@ -1,0 +1,70 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+import CalculadoraPermisos from './CalculadoraPermisos.astro'
+
+const enlaces = [
+	{
+		href: 'https://manpages.ubuntu.com/manpages/noble/es/man1/chmod.1.html',
+		texto: 'Manual completo de chmod traducido al español',
+		sitio: 'manpages.ubuntu.com, en español',
+	},
+	{
+		href: 'https://linuxcommand.org/lc3_lts0090.php',
+		texto: 'Permisos, capítulo de LinuxCommand',
+		sitio: 'linuxcommand.org, en inglés',
+	},
+	{
+		href: 'https://help.ubuntu.com/community/FilePermissions',
+		texto: 'Guía de permisos de archivos de la comunidad Ubuntu',
+		sitio: 'help.ubuntu.com, en inglés',
+	},
+]
+---
+
+<section id="pruebalo" class="seccion">
+	<h2 class="titulo-seccion">Pruébalo tú</h2>
+
+	<p class="parrafo">
+		Marca las casillas y mira cómo cambian la cifra, la cadena y la orden <code>chmod</code>. También
+		funciona al revés: escribe tres cifras y se marcan solas.
+	</p>
+
+	<h3 class="subtitulo">Tres retos</h3>
+	<ol class="mt-4 grid max-w-[64ch] gap-3">
+		<li class="resultado">¿Qué número es <code>rw-r-----</code>? Pista: suma por bloques de tres.</li>
+		<li class="resultado">
+			Escribe <code>644</code> y luego <code>755</code>. ¿Qué casillas cambian, y por qué una es para
+			documentos y la otra para programas?
+		</li>
+		<li class="resultado">Escribe <code>777</code> y lee el aviso. ¿Quién podría borrar ese archivo?</li>
+	</ol>
+
+	<div class="mt-8">
+		<CalculadoraPermisos />
+	</div>
+
+	<details class="mt-6 max-w-[64ch]">
+		<summary class="cursor-pointer font-semibold">Ver la solución del primer reto</summary>
+		<p class="parrafo">
+			<code>rw-</code> = 4 + 2 + 0 = 6, <code>r--</code> = 4 y <code>---</code> = 0. Resultado:{' '}
+			<code>640</code>. El dueño lee y escribe, el grupo solo lee y los demás no ven nada.
+		</p>
+	</details>
+
+	<CajaRefuerzo tipo="mas" id="mas-enlaces-permisos" tema="dónde seguir leyendo">
+		<p>Si quieres seguir por tu cuenta, estas fuentes son buenas y están al día:</p>
+		<ul>
+			{
+				enlaces.map((enlace) => (
+					<li>
+						<a href={enlace.href} target="_blank" rel="noopener noreferrer">
+							{enlace.texto}
+						</a>{' '}
+						<span class="text-tinta/80">({enlace.sitio})</span>
+						<span class="solo-lectores">. Se abre en una pestaña nueva.</span>
+					</li>
+				))
+			}
+		</ul>
+	</CajaRefuerzo>
+</section>

@@ -16,6 +16,7 @@
  */
 import type { Leccion, Parte } from './tipos.ts'
 import * as modulo2 from './modulo-2.ts'
+import * as modulo3 from './modulo-3.ts'
 
 export interface Modulo {
 	/** Segmento de URL y nombre de los paquetes: «modulo-2». */
@@ -26,7 +27,7 @@ export interface Modulo {
 
 export const modulos: Modulo[] = [
 	{ slug: 'modulo-2', leccion: modulo2.leccion, partes: modulo2.partes },
-	// { slug: 'modulo-3', leccion: modulo3.leccion, partes: modulo3.partes },
+	{ slug: 'modulo-3', leccion: modulo3.leccion, partes: modulo3.partes },
 ]
 
 export const buscarModulo = (slug: string) => modulos.find((m) => m.slug === slug)

@@ -1,0 +1,118 @@
+---
+import Quiz from '../modulo-2/Quiz.astro'
+import type { Pregunta } from '../modulo-2/Quiz.astro'
+
+const quizUno: Pregunta[] = [
+	{
+		enunciado: 'Un archivo tiene los permisos -rw-r--r--. ¿Qué puede hacer el grupo?',
+		opciones: ['Leer y escribir', 'Solo leer', 'Nada', 'Leer y ejecutar'],
+		correcta: 1,
+		porque: 'El bloque del grupo es el segundo: <code>r--</code>. Solo tiene la <code>r</code>, así que puede leer y nada más.',
+	},
+	{
+		enunciado: 'Tu carpeta proyecto tiene drw-r--r-- y tú eres el dueño. ¿Puedes entrar en ella con cd?',
+		opciones: [
+			'Sí, porque tiene r',
+			'Sí, porque eres el dueño',
+			'No, porque al dueño le falta la x',
+			'Solo si antes haces ls',
+		],
+		correcta: 2,
+		porque: 'En una carpeta, la <code>x</code> es lo que deja entrar con <code>cd</code>. Ser el dueño no basta si tu bloque es <code>rw-</code>; con <code>chmod u+x proyecto</code> lo arreglas.',
+	},
+	{
+		enunciado: '¿Qué número corresponde a la cadena rwxr-x---?',
+		opciones: ['<code>750</code>', '<code>751</code>', '<code>570</code>', '<code>755</code>'],
+		correcta: 0,
+		porque: '<code>rwx</code> = 4 + 2 + 1 = 7, <code>r-x</code> = 4 + 0 + 1 = 5 y <code>---</code> = 0. Resultado: <code>750</code>.',
+	},
+]
+
+const quizDos: Pregunta[] = [
+	{
+		enunciado: 'Al lanzar ./saludo.sh te sale «Permiso denegado». ¿Qué orden lo arregla dando solo lo que falta?',
+		opciones: [
+			'<code>chmod 777 saludo.sh</code>',
+			'<code>chmod u+x saludo.sh</code>',
+			'<code>chmod o+w saludo.sh</code>',
+			'<code>cd saludo.sh</code>',
+		],
+		correcta: 1,
+		porque: 'Falta el permiso de ejecutar, y solo lo necesitas tú: <code>u+x</code>. El <code>777</code> también lo «arregla», pero de paso deja a todo el mundo cambiarlo.',
+	},
+	{
+		enunciado: 'Escribes chmod 644 notas.txt. ¿Cómo queda la cadena de permisos?',
+		opciones: [
+			'<code>-rwxr--r--</code>',
+			'<code>-rw-rw-rw-</code>',
+			'<code>-rw-r--r--</code>',
+			'<code>-r--r--r--</code>',
+		],
+		correcta: 2,
+		porque: '6 = 4 + 2 = <code>rw-</code> para el dueño, y 4 = <code>r--</code> para el grupo y los otros. Es lo típico en documentos.',
+	},
+	{
+		enunciado: '¿Por qué es mala idea usar chmod 777 «por si acaso»?',
+		opciones: [
+			'Porque hace el archivo más lento',
+			'Porque solo funciona con carpetas',
+			'Porque borra el contenido del archivo',
+			'Porque cualquier usuario podría cambiar o borrar el archivo',
+		],
+		correcta: 3,
+		porque: '<code>777</code> da lectura, escritura y ejecución a todos, incluidos los otros. Lo seguro es dar solo el permiso que falta.',
+	},
+]
+---
+
+<section id="actividades" class="seccion">
+	<h2 class="titulo-seccion">Actividades</h2>
+
+	<p class="parrafo">
+		Dos cuestionarios cortos para comprobar que lo de arriba se ha quedado. Se corrigen solos y
+		puedes repetirlos las veces que quieras: no cuentan para nada, están para que veas dónde flojeas.
+	</p>
+
+	<Quiz id="quiz-leer" titulo="1. Leer permisos" preguntas={quizUno} />
+	<Quiz id="quiz-chmod" titulo="2. Cambiarlos con chmod" preguntas={quizDos} />
+
+	<p class="quiz-total" data-total-actividades role="status" hidden></p>
+</section>
+
+<script>
+	/**
+	 * Junta el resultado de los dos cuestionarios. Dentro de un paquete (xAPI) informa de la puntuación a la plataforma; en la web se queda en un
+	 * resumen en pantalla.
+	 */
+	const resultados = new Map<string, { aciertos: number; total: number }>()
+	const resumen = document.querySelector<HTMLElement>('[data-total-actividades]')
+	const CUESTIONARIOS = 2
+
+	document.addEventListener('quiz:corregido', (evento) => {
+		const { id, aciertos, total } = (evento as CustomEvent).detail
+		resultados.set(id, { aciertos, total })
+		if (resultados.size < CUESTIONARIOS || !resumen) return
+
+		let aciertosTotales = 0
+		let preguntasTotales = 0
+		for (const r of resultados.values()) {
+			aciertosTotales += r.aciertos
+			preguntasTotales += r.total
+		}
+
+		const porcentaje = Math.round((aciertosTotales / preguntasTotales) * 100)
+		const aprobado = porcentaje >= 70
+
+		const texto =
+			`Los dos cuestionarios: ${aciertosTotales} de ${preguntasTotales} (${porcentaje} %). ` +
+			(aprobado ? 'Lo tienes.' : 'Repasa las explicaciones y repite.')
+		resumen.hidden = false
+		resumen.textContent = texto
+
+		// Solo existe en las páginas de los paquetes (SCORM o cmi5); en la web no hay nada.
+		const plataforma = (window as any).PLATAFORMA
+		plataforma?.puntuar?.(porcentaje, aprobado).then((enviado: boolean) => {
+			if (enviado) resumen.textContent = `${texto} Puntuación enviada a la plataforma.`
+		})
+	})
+</script>

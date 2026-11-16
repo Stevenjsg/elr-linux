@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layouts.astro'
+import Nav from '../../components/Nav.astro'
+import Cabecera from '../../components/modulo-3/Cabecera.astro'
+import Partes from '../../components/modulo-3/Partes.astro'
+import { leccion } from '../../data/modulo-3'
+import '../../styles/leccion.css'
+---
+
+<Layout title={leccion.tituloSeo} description={leccion.descripcion}>
+	<Nav />
+
+	<main id="contenido">
+		<article class="mx-auto max-w-[1180px] px-4 pb-20 sm:px-8">
+			<Cabecera modo="anclas" />
+			<Partes />
+		</article>
+	</main>
+
+	<footer class="border-t-[3px] border-tinta">
+		<div class="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-6 px-4 py-10 sm:px-8">
+			<p class="font-mono text-[0.78rem] text-tinta/70">{leccion.pie}</p>
+			<a href="/#ruta" class="volver">Volver al temario</a>
+		</div>
+	</footer>
+</Layout>

@@ -1,0 +1,52 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+---
+
+<section id="denegado" class="seccion">
+	<h2 class="titulo-seccion">¿Por qué me dice que no?</h2>
+
+	<p class="parrafo">
+		Te has descargado un script, intentas lanzarlo y la terminal te contesta esto:
+	</p>
+
+	<pre class="bloque"><code>alex@ubuntu:~$ ./saludo.sh
+bash: ./saludo.sh: Permiso denegado</code></pre>
+
+	<p class="parrafo">
+		No has roto nada. Linux comparte el mismo disco entre muchos usuarios y programas, y cada
+		archivo lleva pegada una etiqueta que dice <strong>quién puede hacer qué</strong> con él. Si tu
+		usuario no está en la etiqueta para esa acción, el sistema dice que no. Aquí el archivo se
+		puede leer, pero nadie le ha dado permiso para <strong>ejecutarse</strong>.
+	</p>
+
+	<h3 class="subtitulo">Tres preguntas y tres grupos de gente</h3>
+
+	<p class="parrafo">
+		Cada archivo responde a tres preguntas: ¿se puede <strong>leer</strong>?, ¿se puede{' '}
+		<strong>escribir</strong>?, ¿se puede <strong>ejecutar</strong>? Y las responde por separado
+		para tres grupos de gente:
+	</p>
+
+	<ul class="mt-4 grid max-w-[64ch] gap-3">
+		<li class="resultado">
+			El <strong>dueño</strong> (<code>u</code>, de <em lang="en">user</em>): normalmente quien creó
+			el archivo. En tu carpeta personal, eres tú.
+		</li>
+		<li class="resultado">
+			El <strong>grupo</strong> (<code>g</code>): un conjunto de usuarios que comparten acceso, por
+			ejemplo «alumnos» o tu equipo de trabajo.
+		</li>
+		<li class="resultado">
+			Los <strong>otros</strong> (<code>o</code>, de <em lang="en">others</em>): cualquier otro
+			usuario del sistema.
+		</li>
+	</ul>
+
+	<CajaRefuerzo tipo="sabias" id="sabias-movil" tema="permisos en otros sistemas">
+		<p>
+			No es una manía de Linux. Tu móvil pregunta si una aplicación puede usar la cámara, y Windows
+			pide confirmación antes de tocar archivos del sistema. La idea es la misma: cada cosa solo
+			puede hacer lo que alguien le ha permitido.
+		</p>
+	</CajaRefuerzo>
+</section>

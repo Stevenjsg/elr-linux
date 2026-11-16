@@ -1,0 +1,60 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+---
+
+<section id="chmod" class="seccion">
+	<h2 class="titulo-seccion">Cámbialos con chmod</h2>
+
+	<p class="parrafo">
+		Los permisos se cambian con <code>chmod</code>, de <em lang="en">change mode</em>. Solo puede
+		usarlo el dueño del archivo (o el administrador). Volvamos al script que no arrancaba:
+	</p>
+
+	<pre class="bloque"><code>alex@ubuntu:~$ chmod u+x saludo.sh
+alex@ubuntu:~$ ./saludo.sh
+¡Hola!</code></pre>
+
+	<p class="parrafo">
+		<code>u+x</code> se lee «al dueño, añádele ejecutar». Igual que con <code>cd</code>, si{' '}
+		<code>chmod</code> no dice nada es que ha funcionado.
+	</p>
+
+	<h3 class="subtitulo">Con letras: quién, qué y cuál</h3>
+
+	<ul class="mt-4 grid max-w-[64ch] gap-3">
+		<li class="resultado">
+			<strong>Quién:</strong> <code>u</code> dueño, <code>g</code> grupo, <code>o</code> otros,{' '}
+			<code>a</code> todos.
+		</li>
+		<li class="resultado">
+			<strong>Qué:</strong> <code>+</code> añade, <code>-</code> quita, <code>=</code> deja exactamente
+			esos.
+		</li>
+		<li class="resultado">
+			<strong>Cuál:</strong> <code>r</code>, <code>w</code> o <code>x</code>, juntos si quieres.
+		</li>
+	</ul>
+
+	<pre class="bloque"><code>alex@ubuntu:~$ chmod g-w informe.txt      # el grupo ya no puede cambiarlo
+alex@ubuntu:~$ chmod o=r notas.txt        # los otros, solo leer
+alex@ubuntu:~$ chmod ug+rw compartido.txt # dueño y grupo, leer y escribir</code></pre>
+
+	<h3 class="subtitulo">Con números: todo de golpe</h3>
+
+	<p class="parrafo">
+		Con números no añades ni quitas: escribes cómo tiene que quedar el archivo entero.
+	</p>
+
+	<pre class="bloque"><code>alex@ubuntu:~$ chmod 644 notas.txt
+alex@ubuntu:~$ ls -l notas.txt
+-rw-r--r-- 1 alex alumnos 318 nov 16 10:30 notas.txt</code></pre>
+
+	<CajaRefuerzo tipo="recuerda" id="recuerda-777" tema="chmod 777">
+		<p>
+			<code>chmod 777</code> «por si acaso» abre la puerta a todo el mundo: cualquier usuario puede
+			cambiar o borrar el archivo. Si algo no te deja, da <strong>solo</strong> el permiso que falta.
+			Y ojo con las carpetas: sin <code>x</code> no puedes entrar con <code>cd</code>, aunque tengan{' '}
+			<code>r</code>.
+		</p>
+	</CajaRefuerzo>
+</section>

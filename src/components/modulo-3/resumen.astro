@@ -1,0 +1,17 @@
+---
+const resumen = [
+	'«Permiso denegado» no es un fallo: el archivo no deja a tu usuario hacer eso.',
+	'Cada archivo dice qué pueden hacer tres grupos de gente: dueño (u), grupo (g) y otros (o).',
+	'ls -l lo enseña en diez caracteres: el tipo (- o d) y tres bloques rwx, siempre en el orden dueño, grupo, otros.',
+	'En una carpeta, x es lo que te deja entrar con cd, y w lo que te deja crear o borrar dentro.',
+	'r vale 4, w vale 2 y x vale 1. Suma cada bloque: rwxr-xr-- es 754.',
+	'chmod cambia los permisos: con letras (u+x, g-w, o=r) o con números (644, 755). Nunca 777 «por si acaso».',
+]
+---
+
+<section id="resumen" class="seccion">
+	<h2 class="titulo-seccion">Resumen</h2>
+	<ul class="mt-5 grid max-w-[66ch] gap-3">
+		{resumen.map((punto) => <li class="resultado">{punto}</li>)}
+	</ul>
+</section>

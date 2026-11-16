@@ -1,0 +1,52 @@
+---
+/**
+ * Registro de las partes del módulo 3.
+ *
+ * Recibe los ids que hay que pintar y los pinta en el orden de src/data/modulo-2.ts.
+ * La web y el paquete xAPI le pasan todos.
+ */
+import { partes } from '../../data/modulo-3'
+
+import Resultados from './resultados.astro'
+import Denegado from './denegado.astro'
+import Leer from './leer.astro'
+import Numeros from './numeros.astro'
+import Chmod from './chmod.astro'
+import Pruebalo from './pruebalo.astro'
+import Resumen from './resumen.astro'
+import Glosario from './glosario.astro'
+import Actividades from './actividades.astro'
+
+const REGISTRO: Record<string, any> = {
+	resultados: Resultados,
+	denegado: Denegado,
+	leer: Leer,
+	numeros: Numeros,
+	chmod: Chmod,
+	pruebalo: Pruebalo,
+	resumen: Resumen,
+	glosario: Glosario,
+	actividades: Actividades,
+}
+
+interface Props {
+	/** Ids a pintar. Si no se indica, se pintan todas. */
+	ids?: string[]
+}
+
+const { ids } = Astro.props
+const aPintar = (ids ?? partes.map((p) => p.id)).filter((id) => id in REGISTRO)
+
+// Si un id del índice no tiene componente, es un fallo de datos: mejor saberlo.
+const huerfanos = partes.filter((p) => !(p.id in REGISTRO)).map((p) => p.id)
+if (huerfanos.length) {
+	throw new Error(`Partes sin componente en Partes.astro: ${huerfanos.join(', ')}`)
+}
+---
+
+{
+	aPintar.map((id) => {
+		const Seccion = REGISTRO[id]
+		return <Seccion />
+	})
+}

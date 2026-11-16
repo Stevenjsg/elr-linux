@@ -1,0 +1,26 @@
+---
+const glosario = [
+	{ t: 'Permiso', d: 'Lo que un usuario puede hacer con un archivo o una carpeta: leer (r), escribir (w) o ejecutar (x).' },
+	{ t: 'Dueño (u)', d: 'El usuario al que pertenece el archivo, normalmente quien lo creó. Es el único, junto con el administrador, que puede cambiar sus permisos.' },
+	{ t: 'Grupo (g)', d: 'Un conjunto de usuarios que comparten los mismos permisos sobre un archivo, por ejemplo «alumnos».' },
+	{ t: 'Otros (o)', d: 'Cualquier usuario del sistema que no es el dueño ni está en el grupo del archivo.' },
+	{ t: 'Cadena de permisos', d: 'Los diez caracteres del principio de cada línea de ls -l, como -rwxr-xr--: el tipo y tres bloques rwx.' },
+	{ t: 'Notación numérica (octal)', d: 'Los permisos escritos con tres cifras del 0 al 7, una por bloque, sumando r = 4, w = 2 y x = 1. Por ejemplo 644.' },
+	{ t: 'chmod', d: 'La orden que cambia los permisos, con letras (chmod u+x) o con números (chmod 755).' },
+	{ t: 'Ejecutable', d: 'Un archivo con permiso x, que se puede lanzar como programa con ./nombre.' },
+]
+---
+
+<section id="glosario" class="seccion">
+	<h2 class="titulo-seccion">Glosario</h2>
+	<dl class="mt-6 grid max-w-[70ch] gap-5">
+		{
+			glosario.map((item) => (
+				<div class="definicion">
+					<dt>{item.t}</dt>
+					<dd>{item.d}</dd>
+				</div>
+			))
+		}
+	</dl>
+</section>

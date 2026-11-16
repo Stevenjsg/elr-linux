@@ -1,0 +1,75 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+
+const bloques = [
+	{ texto: '-', nombre: 'Tipo', detalle: '- archivo, d carpeta' },
+	{ texto: 'rwx', nombre: 'Dueño (u)', detalle: 'Quien creó el archivo: tú' },
+	{ texto: 'r-x', nombre: 'Grupo (g)', detalle: 'Tu equipo, por ejemplo «alumnos»' },
+	{ texto: 'r--', nombre: 'Otros (o)', detalle: 'Todos los demás usuarios' },
+]
+---
+
+<section id="leer" class="seccion">
+	<h2 class="titulo-seccion">Diez letras que lo cuentan todo</h2>
+
+	<p class="parrafo">
+		En el tramo 02 viste que <code>ls -l</code> empieza cada línea con una ristra de letras. Ahora
+		toca leerla:
+	</p>
+
+	<pre class="bloque"><code>alex@ubuntu:~$ ls -l
+-rwxr-xr-- 1 alex alumnos  52 nov 16 10:24 saludo.sh
+-rw-r--r-- 1 alex alumnos 318 nov 16 10:24 notas.txt
+drwxr-x--- 2 alex alumnos 4096 nov 16 10:24 proyecto</code></pre>
+
+	<p class="parrafo">
+		Son diez caracteres. Léelos por bloques, de izquierda a derecha: uno para el tipo y tres grupos
+		de tres para el dueño, el grupo y los otros. Así se lee la primera línea:
+	</p>
+
+	<div class="mt-6 grid max-w-[64ch] gap-3 sm:grid-cols-4">
+		{
+			bloques.map((b) => (
+				<div class="rounded-xl border-[3px] border-tinta bg-white p-4">
+					<p class="font-mono text-[1.6rem] font-semibold text-uva">{b.texto}</p>
+					<p class="mt-1 font-extrabold">{b.nombre}</p>
+					<p class="mt-1 text-[0.9rem] text-tinta/80">{b.detalle}</p>
+				</div>
+			))
+		}
+	</div>
+
+	<h3 class="subtitulo">Qué significa cada letra</h3>
+
+	<dl class="mt-4 grid max-w-[66ch] gap-4">
+		<div class="definicion">
+			<dt><code>r</code>, leer</dt>
+			<dd>En un archivo, ver lo que hay dentro. En una carpeta, listar los nombres que contiene.</dd>
+		</div>
+		<div class="definicion">
+			<dt><code>w</code>, escribir</dt>
+			<dd>En un archivo, cambiar su contenido. En una carpeta, crear, renombrar o borrar cosas dentro.</dd>
+		</div>
+		<div class="definicion">
+			<dt><code>x</code>, ejecutar</dt>
+			<dd>En un archivo, lanzarlo como programa. En una carpeta, entrar en ella con <code>cd</code>.</dd>
+		</div>
+		<div class="definicion">
+			<dt><code>-</code>, no</dt>
+			<dd>Ese permiso falta. Siempre ocupa su sitio, para que las posiciones no se muevan.</dd>
+		</div>
+	</dl>
+
+	<p class="parrafo">
+		Así que <code>saludo.sh</code> lo puede leer, cambiar y lanzar Alex; los de «alumnos» pueden
+		leerlo y lanzarlo, y el resto solo leerlo. En <code>proyecto</code>, los otros no tienen nada:
+		ni siquiera pueden entrar.
+	</p>
+
+	<CajaRefuerzo tipo="recuerda" id="recuerda-orden" tema="el orden de los bloques">
+		<p>
+			El orden es siempre el mismo: <strong>tipo, dueño, grupo, otros</strong>, y dentro de cada
+			bloque, <strong>r, w, x</strong>. Si una letra falta, en su sitio hay un guion.
+		</p>
+	</CajaRefuerzo>
+</section>

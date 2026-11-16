@@ -1,0 +1,70 @@
+---
+import CajaRefuerzo from '../CajaRefuerzo.astro'
+
+const ejemplo = [
+	{ quien: 'Dueño', letras: 'rwx', suma: '4 + 2 + 1', total: 7 },
+	{ quien: 'Grupo', letras: 'r-x', suma: '4 + 0 + 1', total: 5 },
+	{ quien: 'Otros', letras: 'r--', suma: '4 + 0 + 0', total: 4 },
+]
+---
+
+<section id="numeros" class="seccion">
+	<h2 class="titulo-seccion">Cada letra vale un número</h2>
+
+	<p class="parrafo">
+		Escribir <code>rwxr-xr--</code> es largo. Por eso cada permiso tiene un valor, y cada bloque se
+		resume en una sola cifra sumando lo que tiene:
+	</p>
+
+	<div class="mt-6 grid max-w-[40ch] grid-cols-3 gap-3 text-center">
+		<div class="rounded-xl border-[3px] border-tinta bg-white p-4">
+			<p class="font-mono text-[1.8rem] font-semibold text-uva">4</p><p class="font-mono">r</p>
+		</div>
+		<div class="rounded-xl border-[3px] border-tinta bg-white p-4">
+			<p class="font-mono text-[1.8rem] font-semibold text-uva">2</p><p class="font-mono">w</p>
+		</div>
+		<div class="rounded-xl border-[3px] border-tinta bg-white p-4">
+			<p class="font-mono text-[1.8rem] font-semibold text-uva">1</p><p class="font-mono">x</p>
+		</div>
+	</div>
+
+	<p class="parrafo">Lo que falta vale 0. Ejemplo resuelto con <code>-rwxr-xr--</code>:</p>
+
+	<div class="mt-4 max-w-[52ch] overflow-x-auto">
+		<table class="w-full border-collapse text-left">
+			<thead>
+				<tr class="border-b-[3px] border-tinta">
+					<th scope="col" class="py-2 pr-4">Quién</th>
+					<th scope="col" class="py-2 pr-4">Letras</th>
+					<th scope="col" class="py-2 pr-4">Suma</th>
+					<th scope="col" class="py-2">Cifra</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					ejemplo.map((f) => (
+						<tr class="border-b border-tinta/20">
+							<th scope="row" class="py-2 pr-4 font-semibold">{f.quien}</th>
+							<td class="py-2 pr-4 font-mono">{f.letras}</td>
+							<td class="py-2 pr-4 font-mono">{f.suma}</td>
+							<td class="py-2 font-mono font-semibold text-uva">{f.total}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<p class="parrafo">
+		Resultado: <strong><code>754</code></strong>. Tres cifras, una por bloque, siempre en el orden
+		dueño, grupo, otros.
+	</p>
+
+	<CajaRefuerzo tipo="sabias" id="sabias-tipicos" tema="los valores más habituales">
+		<p>
+			<code>755</code> es lo típico en programas y carpetas; <code>644</code>, en documentos;{' '}
+			<code>600</code>, en archivos privados como claves. Si ves <code>777</code>, desconfía: todo el
+			mundo puede hacerlo todo.
+		</p>
+	</CajaRefuerzo>
+</section>

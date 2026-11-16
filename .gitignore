@@ -26,3 +26,7 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 /cmi5/
+/xapi/
+/articulate/rise-permisos/
+/articulate/*.zip
+/articulate/original/

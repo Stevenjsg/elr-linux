@@ -1,36 +1,66 @@
 ---
 /**
  * Envoltorio de una parte suelta dentro de un paquete para plataformas
- * (SCORM 1.2 o cmi5).
+ * (SCORM 1.2, cmi5 o xAPI Launch).
  *
  * Deliberadamente NO lleva la navegación del sitio: dentro de una plataforma cada
  * parte es un SCO / una AU independiente y es la plataforma quien navega entre ellas.
  *
+ * Sin parteId pinta el módulo entero en una sola página (lo usa el paquete xAPI,
+ * porque lrs.io registra un único punto de entrada por zip).
+ *
  * El envoltorio de la plataforma va en línea para que el paquete no dependa de
- * rutas. Los dos (src/plataforma/*.js) exponen window.PLATAFORMA con la misma
+ * rutas. Los tres (src/plataforma/*.js) exponen window.PLATAFORMA con la misma
  * forma, así que este layout y los cuestionarios no distinguen entre ellos.
  */
 import type { Modulo } from '../data/modulos'
 import scorm12 from '../plataforma/scorm12.js?raw'
 import cmi5 from '../plataforma/cmi5.js?raw'
+import xapiLaunch from '../plataforma/xapi-launch.js?raw'
 import '../styles/global.css'
 import '../styles/leccion.css'
 
-export type Plataforma = 'scorm' | 'cmi5'
+export type Plataforma = 'scorm' | 'cmi5' | 'xapi'
 
 interface Props {
 	modulo: Modulo
-	parteId: string
+	/** Sin parteId: el módulo entero en una página. */
+	parteId?: string
 	plataforma: Plataforma
 }
 
 const { modulo, parteId, plataforma } = Astro.props
 const { leccion, partes } = modulo
-const parte = partes.find((p) => p.id === parteId)!
+const parte = parteId ? partes.find((p) => p.id === parteId)! : undefined
 const posicion = partes.findIndex((p) => p.id === parteId) + 1
+const titulo = parte ? parte.titulo : leccion.titulo
+const minutos = parte ? parte.minutos : partes.reduce((n, p) => n + p.minutos, 0)
+const queEs = parte ? 'esta parte' : 'esta lección'
 // Una parte con cuestionario informa ella misma de su nota: el botón genérico sobra.
-const botonGenerico = !parte.completaSola
-const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
+const botonGenerico = !parte?.completaSola
+const envoltorio = { scorm: scorm12, cmi5, xapi: xapiLaunch }[plataforma]
+
+/**
+ * Solo xAPI: IRIs de la actividad y de la que la agrupa. Van bajo …/elr/xapi para
+ * no chocar con las AUs del paquete cmi5 si los dos se suben al mismo lrs.io. Deben
+ * coincidir con los del tincan.xml que genera scripts/empaquetar-xapi.mjs.
+ */
+const IRI = 'https://sjsilgom.upv.edu.es/xapi/elr/xapi'
+const datosXapi = JSON.stringify(
+	parte
+		? {
+				actividad: `${IRI}/${modulo.slug}/${parte.id}`,
+				nombre: `${parte.numero}. ${parte.titulo}`,
+				curso: `${IRI}/${modulo.slug}`,
+				nombreCurso: `${leccion.tramo} — ${leccion.titulo}`,
+			}
+		: {
+				actividad: `${IRI}/${modulo.slug}`,
+				nombre: `${leccion.tramo} — ${leccion.titulo}`,
+				curso: IRI,
+				nombreCurso: 'elr — Linux desde cero',
+			},
+)
 ---
 
 <!DOCTYPE html>
@@ -38,8 +68,8 @@ const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content={`${parte.titulo} — ${leccion.titulo}. ${leccion.descripcion}`} />
-		<title>{parte.titulo} — {leccion.titulo}</title>
+		<meta name="description" content={`${titulo} — ${leccion.titulo}. ${leccion.descripcion}`} />
+		<title>{parte ? `${titulo} — ${leccion.titulo}` : leccion.titulo}</title>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -48,10 +78,19 @@ const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
 			href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap"
 		/>
 
+		{
+			plataforma === 'xapi' && (
+				<>
+					{/* Librería de veracity-tech/lrs-launch-example: ADL xAPIWrapper + ADL.launch. */}
+					<script is:inline src="/vendor/xapiwrapper.min.js" />
+					<script is:inline set:html={`window.ELR_XAPI = ${datosXapi}`} />
+				</>
+			)
+		}
 		<script is:inline set:html={envoltorio} />
 	</head>
 
-	<body>
+	<body data-que={parte ? 'parte' : 'lección'}>
 		<a class="saltar" href="#contenido">Saltar al contenido</a>
 
 		<div class="mx-auto max-w-[1180px] px-4 pb-16 sm:px-8">
@@ -67,8 +106,8 @@ const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
 
 				<p class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 font-mono text-[0.76rem] font-semibold text-uva">
 					<span>{leccion.tramo}</span>
-					<span class="text-tinta/70">Parte {posicion} de {partes.length}</span>
-					{parte.minutos > 0 && <span class="text-tinta/70">{parte.minutos} min aprox.</span>}
+					{parte && <span class="text-tinta/70">Parte {posicion} de {partes.length}</span>}
+					{minutos > 0 && <span class="text-tinta/70">{minutos} min aprox.</span>}
 				</p>
 
 				<slot />
@@ -78,11 +117,11 @@ const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
 						botonGenerico && (
 							<>
 								<p>
-									Cuando hayas leído esta parte, márcala para que el progreso quede registrado en la
+									Cuando hayas leído {queEs}, márcala para que el progreso quede registrado en la
 									plataforma.
 								</p>
 								<button type="button" class="boton-scorm" id="completar" disabled>
-									He terminado esta parte
+									He terminado {queEs}
 								</button>
 							</>
 						)
@@ -104,10 +143,12 @@ const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
 				var boton = document.getElementById('completar')
 				var estado = document.getElementById('estado')
 				var salir = document.getElementById('salir')
+				var QUE = document.body.dataset.que || 'parte'
+				var Que = QUE.charAt(0).toUpperCase() + QUE.slice(1)
 
 				var MENSAJES = {
 					conectado: boton
-						? 'Conectado a la plataforma. Tu progreso se guardará al marcar esta parte.'
+						? 'Conectado a la plataforma. Tu progreso se guardará al marcar esta ' + QUE + '.'
 						: 'Conectado a la plataforma. Tu puntuación se guardará al corregir.',
 					revision: 'Abierto en modo repaso: puedes leer la parte, pero no se registra progreso.',
 					'sin-plataforma': 'Abierto fuera de una plataforma: puedes leer la parte, pero el progreso no se guarda.',
@@ -122,10 +163,10 @@ const envoltorio = plataforma === 'cmi5' ? cmi5 : scorm12
 
 				function marcarHecha(enviado) {
 					boton.disabled = true
-					boton.textContent = 'Parte completada'
+					boton.textContent = Que + ' completada'
 					estado.textContent = enviado
-						? 'Parte completada y enviada a la plataforma.'
-						: 'Parte completada. No hay plataforma a la escucha, así que no se ha enviado nada.'
+						? Que + ' completada y enviada a la plataforma.'
+						: Que + ' completada. No hay plataforma a la escucha, así que no se ha enviado nada.'
 				}
 
 				P.iniciar().then(function (conectado) {

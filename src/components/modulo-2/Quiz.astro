@@ -64,7 +64,16 @@ const { id, titulo, preguntas } = Astro.props
 </section>
 
 <script>
-	type Resultado = { id: string; aciertos: number; total: number }
+	/** Detalle por pregunta: lo usa el paquete xAPI para enviar un «answered» por cada una. */
+	type Respuesta = {
+		numero: number
+		enunciado: string
+		opciones: string[]
+		correcta: number
+		elegida: number | null
+		acertada: boolean
+	}
+	type Resultado = { id: string; aciertos: number; total: number; respuestas: Respuesta[] }
 
 	document.querySelectorAll<HTMLElement>('[data-quiz]').forEach((quiz) => {
 		const formulario = quiz.querySelector<HTMLFormElement>('[data-quiz-form]')!
@@ -77,13 +86,22 @@ const { id, titulo, preguntas } = Astro.props
 			evento.preventDefault()
 
 			let aciertos = 0
+			const respuestas: Respuesta[] = []
 
-			preguntas.forEach((pregunta) => {
+			preguntas.forEach((pregunta, i) => {
 				const correcta = Number(pregunta.dataset.correcta)
 				const elegida = pregunta.querySelector<HTMLInputElement>('input:checked')
 				const acertada = elegida !== null && Number(elegida.value) === correcta
 
 				if (acertada) aciertos++
+				respuestas.push({
+					numero: i + 1,
+					enunciado: (pregunta.querySelector('legend')?.textContent ?? '').trim().replace(/^\d+\s*/, ''),
+					opciones: Array.from(pregunta.querySelectorAll('.quiz-opcion')).map((o) => o.textContent!.trim()),
+					correcta,
+					elegida: elegida ? Number(elegida.value) : null,
+					acertada,
+				})
 
 				pregunta.classList.toggle('es-acierto', acertada)
 				pregunta.classList.toggle('es-fallo', !acertada)
@@ -115,7 +133,7 @@ const { id, titulo, preguntas } = Astro.props
 			quiz.dispatchEvent(
 				new CustomEvent<Resultado>('quiz:corregido', {
 					bubbles: true,
-					detail: { id: quiz.dataset.quiz!, aciertos, total },
+					detail: { id: quiz.dataset.quiz!, aciertos, total, respuestas },
 				}),
 			)
 		})

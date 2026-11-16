@@ -1,0 +1,24 @@
+---
+/**
+ * El módulo entero en una sola página, para el paquete xAPI (librería de Veracity,
+ * para lrs.io). lrs.io registra un único punto de entrada por zip, así que el
+ * tutorial va en una página y no en una por parte como SCORM y cmi5.
+ *
+ * Astro la genera en dist/xapi/<modulo>/index.html. El script
+ * scripts/empaquetar-xapi.mjs reescribe las rutas a relativas y la comprime
+ * junto con el tincan.xml y xapiwrapper.min.js.
+ */
+import ParteSuelta from '../../../layouts/ParteSuelta.astro'
+import PartesModulo from '../../../components/PartesModulo.astro'
+import { modulos } from '../../../data/modulos'
+
+export function getStaticPaths() {
+	return modulos.map((modulo) => ({ params: { modulo: modulo.slug }, props: { modulo } }))
+}
+
+const { modulo } = Astro.props
+---
+
+<ParteSuelta modulo={modulo} plataforma="xapi">
+	<PartesModulo modulo={modulo.slug} />
+</ParteSuelta>

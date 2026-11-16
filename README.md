@@ -9,6 +9,7 @@ El mismo contenido se publica de tres formas:
 | **Web** | El curso en abierto, en <https://sjsilgom.upv.edu.es> | `pnpm build` |
 | **Paquete SCORM 1.2** | Subirlo a un LMS clásico (Moodle, etc.) | `pnpm scorm` |
 | **Paquete cmi5 (xAPI)** | Subirlo a **lrs.io** u otra plataforma cmi5, con seguimiento por xAPI | `pnpm cmi5` |
+| **Paquete xAPI** | Subirlo a **lrs.io**, con la librería de Veracity (`xapiwrapper` + `ADL.launch`) | `pnpm xapi` |
 
 Todo se genera desde una sola fuente: si cambias el texto de una parte, cambia en la web y en los dos paquetes.
 
@@ -68,7 +69,10 @@ Los cambios en los archivos se ven al momento en el navegador.
 | `pnpm preview` | Sirve `dist/` en local para revisarla antes de publicar |
 | `pnpm scorm` | Genera la web y los paquetes SCORM 1.2 (`scorm/`) |
 | `pnpm cmi5` | Genera la web y los paquetes cmi5 (`cmi5/`) |
-| `pnpm paquetes` | Genera la web, los paquetes SCORM y los cmi5 de una vez |
+| `pnpm xapi` | Genera la web y el paquete xAPI de una página (`xapi/`) |
+| `pnpm rise` | Adapta la exportación xAPI de Rise 360 (`articulate/`) |
+| `pnpm statements rise\|tutorial` | Lista los últimos statements de lrs.io (necesita `.env`) |
+| `pnpm paquetes` | Genera la web y los paquetes SCORM, cmi5 y xAPI Launch de una vez |
 
 ## 3. Estructura del proyecto
 
@@ -299,6 +303,36 @@ lrs.io es el LRS en la nube de Veracity. Los nombres exactos de los menús puede
 5. Pulsa «He terminado esta parte» y comprueba en el visor de statements que aparecen `initialized`, `completed` y, al salir, `terminated`.
 
 **Para actualizar el curso**, vuelve a generar el paquete y súbelo como **nueva versión del mismo curso**, no como curso nuevo. Mientras no cambies los IRI (sección 9), lrs.io lo reconoce como el mismo y el progreso del alumnado se conserva.
+
+### Paquete xAPI Launch (librería de Veracity)
+
+Variante del tutorial hecha con la librería de [veracity-tech/lrs-launch-example](https://github.com/veracity-tech/lrs-launch-example): `public/vendor/xapiwrapper.min.js` (ADL xAPIWrapper 1.10.0, Apache 2.0) y `ADL.launch`. El envoltorio es `src/plataforma/xapi-launch.js` y expone el mismo `window.PLATAFORMA` que SCORM y cmi5.
+
+1. `pnpm xapi` → `xapi/elr-modulo-2-xapi.zip`: **el módulo entero en una sola página** (`leccion/index.html`), porque lrs.io registra un único punto de entrada por zip. El manifiesto es un `tincan.xml`, que lrs.io reconoce como *Tincan/xAPI*.
+2. Súbelo en **Learner Portal → Content → Upload Content** y lánzalo desde **Visit the Portal**. La página acepta los dos lanzamientos de lrs.io: Tin Can (`?endpoint=…&auth=…&actor=…`, que la librería lee sola) y xAPI Launch (`?xAPILaunchKey=…&xAPILaunchService=…`, con `ADL.launch`). En ninguno hay credenciales en el código.
+3. Statements que envía: `initialized`, `experienced` por cada sección que se ve, `played`/`experienced` en vídeo y audio, `completed`, `answered` por pregunta al corregir, `passed`/`failed` con la nota y `terminated` al salir.
+
+Sus IRIs van bajo `https://sjsilgom.upv.edu.es/xapi/elr/xapi/…` para no mezclarse con las AUs del paquete cmi5.
+
+### Curso de Rise 360 (Articulate)
+
+La exportación xAPI de Rise (*Publish → LMS → xAPI*) se adapta con `pnpm rise`. Deja el zip de Rise en la raíz del proyecto (o pásalo como argumento). El script:
+
+- lo guarda tal cual en `articulate/original/`;
+- cambia el IRI aleatorio de Rise por `https://sjsilgom.upv.edu.es/xapi/elr/rise/permisos-linux`, pone el idioma en `es-ES` y limpia los nombres de las lecciones (`tincan.xml` y `tc-config.js`);
+- genera `articulate/elr-rise-permisos-xapi.zip`, que se sube a lrs.io igual que los demás. No lleva credenciales: lrs.io las pasa al lanzarlo.
+
+### Sacar los statements para un informe
+
+Crea en lrs.io una clave de solo lectura y ponla en `.env`:
+
+```
+LRS_ENDPOINT=https://<tu-lrs>.lrs.io/xapi/
+LRS_KEY=…
+LRS_SECRET=…
+```
+
+`pnpm statements rise` o `pnpm statements tutorial` imprimen los 20 últimos, una línea por statement (fecha · alumno · verbo · actividad · resultado).
 
 ## 9. Cómo funciona el seguimiento
 

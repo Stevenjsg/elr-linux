@@ -12,7 +12,10 @@
     "astro": "astro",
     "scorm": "astro build && node scripts/empaquetar-scorm.mjs",
     "cmi5": "astro build && node scripts/empaquetar-cmi5.mjs",
-    "paquetes": "astro build && node scripts/empaquetar-scorm.mjs && node scripts/empaquetar-cmi5.mjs"
+    "xapi": "astro build && node scripts/empaquetar-xapi.mjs",
+    "rise": "node scripts/adaptar-rise.mjs",
+    "statements": "node --env-file-if-exists=.env scripts/listar-statements.mjs",
+    "paquetes": "astro build && node scripts/empaquetar-scorm.mjs && node scripts/empaquetar-cmi5.mjs && node scripts/empaquetar-xapi.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
